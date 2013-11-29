@@ -11,7 +11,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Insurance_company.Models;
 using Insurance_company.ViewModels;
 
 namespace Insurance_company.Views
@@ -22,42 +21,43 @@ namespace Insurance_company.Views
     public partial class EmployeePanel : Window
     {
 
-        private EmployeeSet _employee;
+        private ServiceReference.EmployeeSet _employee;
 
         public EmployeePanel()
         {
             InitializeComponent();
         }
 
-        public EmployeePanel(EmployeeSet employee) : this() // Wywołujemy domyślny konstruktor
+        public EmployeePanel(ServiceReference.EmployeeSet employee)
+            : this() // Wywołujemy domyślny konstruktor
         {
             this._employee = employee;
         }
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            using (var db = new InsuranceCompanyEntities())
-            {
-                if (Tabs.SelectedIndex == 0)
-                {
-                    if (ClientsGrid != null && ClientsGrid.DataContext != null)
-                        ((ClientsViewModel)ClientsGrid.DataContext).refresh(db.ClientSet);
-                }
-                else if (Tabs.SelectedIndex == 1)
-                {
-                    if (PoliciesGrid != null && PoliciesGrid.DataContext != null)
-                        ((PoliciesViewModel)PoliciesGrid.DataContext).refresh(db.PolicySet);
-                }
+            //using (var db = new InsuranceCompanyEntities())
+            //{
+            //    if (Tabs.SelectedIndex == 0)
+            //    {
+            //        if (ClientsGrid != null && ClientsGrid.DataContext != null)
+            //            ((ClientsViewModel)ClientsGrid.DataContext).refresh(db.ClientSet);
+            //    }
+            //    else if (Tabs.SelectedIndex == 1)
+            //    {
+            //        if (PoliciesGrid != null && PoliciesGrid.DataContext != null)
+            //            ((PoliciesViewModel)PoliciesGrid.DataContext).refresh(db.PolicySet);
+            //    }
 
-                else if (Tabs.SelectedIndex == 6)
-                {
-                    numberOfClients.Text = db.ClientSet.Count().ToString();
-                    numberOfPolicies.Text = db.PolicySet.Count().ToString();
-                    numberOfHouses.Text = db.HouseSet.Count().ToString();
-                    numberOfCars.Text = db.CarSet.Count().ToString();
-                    numberOfEmployees.Text = db.EmployeeSet.Count().ToString();
-                }
-            }
+            //    else if (Tabs.SelectedIndex == 6)
+            //    {
+            //        numberOfClients.Text = db.ClientSet.Count().ToString();
+            //        numberOfPolicies.Text = db.PolicySet.Count().ToString();
+            //        numberOfHouses.Text = db.HouseSet.Count().ToString();
+            //        numberOfCars.Text = db.CarSet.Count().ToString();
+            //        numberOfEmployees.Text = db.EmployeeSet.Count().ToString();
+            //    }
+            //}
         }
 
         private void ObjectTypeChanged(object sender, SelectionChangedEventArgs e)

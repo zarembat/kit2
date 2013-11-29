@@ -43,21 +43,29 @@ namespace Insurance_company.ViewModels
 
             Login LoginWindow = Parameter as Login; // We pass window object to get the password
             ServiceReference.EmployeeSet Employee = null;
-            System.Data.Services.Client.DataServiceQuery<ServiceReference.EmployeeSet> employeeQuery;
-            CollectionViewSource ordersViewSource;
+            ServiceReference.InsuranceCompanyEntities dataServiceClient = new ServiceReference.InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
+            //System.Data.Services.Client.DataServiceQuery<ServiceReference.EmployeeSet> employeeQuery = dataServiceClient.EmployeeSet.Where(e => e.Login == UserName && e.Password == LoginWindow.PasswordInput.Password).FirstOrDefault();
+            //CollectionViewSource ordersViewSource;
             var LoginTask = Task.Factory.StartNew(() =>
             {
-                // Siema
-                using (var db = new ServiceReference.InsuranceCompanyEntities())
+                // Employee = dataServiceClient.EmployeeSet.Where(e => e.Login == UserName && e.Password == LoginWindow.PasswordInput.Password).FirstOrDefault(); // Looking for an employee in the database
+
+                var Emp = from emp in dataServiceClient.EmployeeSet
+                           where emp.Login == UserName
+                           select emp;
+                if (Emp == null)
+                    MessageBox.Show("Invalid username or password!");
+                else
                 {
-                    Employee = db.EmployeeSet.Where(e => e.Login == UserName && e.Password == LoginWindow.PasswordInput.Password).FirstOrDefault(); // Looking for an employee in the database
-                    if (Employee == null)
-                        MessageBox.Show("Invalid username or password!");
+                    new EmployeePanel().Show(); // We open Employee panel
+                    LoginWindow.Close(); // We close login window
                 }
+
             });
             LoginTask.Wait();
             if (Employee != null)
             {
+                MessageBox.Show("Fajno");
                 new EmployeePanel().Show(); // We open Employee panel
                 LoginWindow.Close(); // We close login window
             }

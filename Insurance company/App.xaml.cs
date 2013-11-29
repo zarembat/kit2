@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using Insurance_company.Models;
 
 namespace Insurance_company
 {
@@ -11,10 +10,10 @@ namespace Insurance_company
 
         public App()
         {
-            using (var db = new InsuranceCompanyEntities())
-            {
-                db.Database.CreateIfNotExists();
-            }
+            //using (var db = new InsuranceCompanyEntities())
+            //{
+            //    db.Database.CreateIfNotExists();
+            //}
         }
 
     }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Insurance_company.Models;
 using System.Windows.Input;
 using Insurance_company.Helpers;
 using Insurance_company.Views;
@@ -19,8 +18,8 @@ namespace Insurance_company.ViewModels
         private const string CAR = "Car";
         private const string HOUSE = "House";
 
-        private PolicySet _policy;
-        public PolicySet Policy
+        private ServiceReference.PolicySet _policy;
+        public ServiceReference.PolicySet Policy
         {
             get { return _policy; }
             set
@@ -33,8 +32,8 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private HouseSet _house;
-        public HouseSet House
+        private ServiceReference.HouseSet _house;
+        public ServiceReference.HouseSet House
         {
             get { return _house; }
             set
@@ -47,8 +46,8 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private AdressSet _address;
-        public AdressSet Address
+        private ServiceReference.AdressSet _address;
+        public ServiceReference.AdressSet Address
         {
             get { return _address; }
             set
@@ -61,8 +60,8 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private CarSet _car;
-        public CarSet Car
+        private ServiceReference.CarSet _car;
+        public ServiceReference.CarSet Car
         {
             get { return _car; }
             set
@@ -75,8 +74,8 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private ObservableCollection<ClientSet> _clients;
-        public ObservableCollection<ClientSet> Clients
+        private ObservableCollection<ServiceReference.ClientSet> _clients;
+        public ObservableCollection<ServiceReference.ClientSet> Clients
         {
             get { return _clients; }
             set
@@ -96,39 +95,39 @@ namespace Insurance_company.ViewModels
 
         }
 
-        public EditPolicyViewModel(PolicySet policy)
+        public EditPolicyViewModel(ServiceReference.PolicySet policy)
         {
             _policy = policy;
             var LoadPolicyTask = Task.Factory.StartNew(() =>
             {
-                using (var db = new InsuranceCompanyEntities())
-                {
+                //using (var db = new InsuranceCompanyEntities())
+                //{
 
-                    Clients = new ObservableCollection<ClientSet>(db.ClientSet);
-                    ObjectType = _policy.ObjectType;
-                    if (_policy.ObjectType.Equals(CAR)) // Object is a car
-                    {
-                        var car = db.CarSet.Where(c => c.Policy_PolicyId == policy.PolicyId).FirstOrDefault(); // Looking for a car in the database
-                        if (car == null)
-                            MessageBox.Show("No car...");
-                        else
-                        {
-                            _car = car;
-                        }
-                    }
-                    else if (_policy.ObjectType.Equals(HOUSE)) // Object is a house
-                    {
-                        var house = db.HouseSet.Where(h => h.Policy_PolicyId == policy.PolicyId).FirstOrDefault(); // Looking for a house
-                        var address = db.AdressSet.Where(a => a.AdressId == house.AdressSet.AdressId).FirstOrDefault(); // Getting house's address
-                        if (house == null || address == null)
-                            MessageBox.Show("No house...");
-                        else
-                        {
-                            _house = house;
-                            _address = address;
-                        }
-                    }
-                }
+                //    Clients = new ObservableCollection<ClientSet>(db.ClientSet);
+                //    ObjectType = _policy.ObjectType;
+                //    if (_policy.ObjectType.Equals(CAR)) // Object is a car
+                //    {
+                //        var car = db.CarSet.Where(c => c.Policy_PolicyId == policy.PolicyId).FirstOrDefault(); // Looking for a car in the database
+                //        if (car == null)
+                //            MessageBox.Show("No car...");
+                //        else
+                //        {
+                //            _car = car;
+                //        }
+                //    }
+                //    else if (_policy.ObjectType.Equals(HOUSE)) // Object is a house
+                //    {
+                //        var house = db.HouseSet.Where(h => h.Policy_PolicyId == policy.PolicyId).FirstOrDefault(); // Looking for a house
+                //        var address = db.AdressSet.Where(a => a.AdressId == house.AdressSet.AdressId).FirstOrDefault(); // Getting house's address
+                //        if (house == null || address == null)
+                //            MessageBox.Show("No house...");
+                //        else
+                //        {
+                //            _house = house;
+                //            _address = address;
+                //        }
+                //    }
+                //}
             });
             LoadPolicyTask.Wait();
         }
@@ -138,31 +137,31 @@ namespace Insurance_company.ViewModels
 
             Task.Factory.StartNew(() =>
             {
-                using (var db = new InsuranceCompanyEntities())
-                {
-                    var policy = db.PolicySet.Find(Policy.PolicyId);
-                    db.Entry(policy).CurrentValues.SetValues(Policy);
+                //using (var db = new InsuranceCompanyEntities())
+                //{
+                //    var policy = db.PolicySet.Find(Policy.PolicyId);
+                //    db.Entry(policy).CurrentValues.SetValues(Policy);
 
-                    if (ObjectType.Equals(CAR))
-                    {
+                //    if (ObjectType.Equals(CAR))
+                //    {
 
-                        var car = db.CarSet.Find(Car.ObjectId); // Getting old entry
-                        db.Entry(car).CurrentValues.SetValues(Car); // Updating
+                //        var car = db.CarSet.Find(Car.ObjectId); // Getting old entry
+                //        db.Entry(car).CurrentValues.SetValues(Car); // Updating
 
-                    }
-                    if (ObjectType.Equals(House))
-                    {
+                //    }
+                //    if (ObjectType.Equals(House))
+                //    {
 
-                        var house = db.HouseSet.Find(House.ObjectId);
-                        db.Entry(house).CurrentValues.SetValues(House);
+                //        var house = db.HouseSet.Find(House.ObjectId);
+                //        db.Entry(house).CurrentValues.SetValues(House);
 
-                        var address = db.AdressSet.Find(Address.AdressId);
-                        db.Entry(address).CurrentValues.SetValues(Address);
+                //        var address = db.AdressSet.Find(Address.AdressId);
+                //        db.Entry(address).CurrentValues.SetValues(Address);
 
-                    }
+                //    }
 
-                    db.SaveChanges(); // Saving changes to the database
-                }
+                //    db.SaveChanges(); // Saving changes to the database
+                //}
             }).ContinueWith(t => {
                 MessageBox.Show("Saved!");
             }, TaskContinuationOptions.OnlyOnRanToCompletion);

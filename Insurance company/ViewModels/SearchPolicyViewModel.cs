@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls;
 using Insurance_company.Helpers;
-using Insurance_company.Models;
 using Insurance_company.Views;
 using System.Windows.Data;
 using System.Data.Entity.Infrastructure;
@@ -25,9 +24,9 @@ namespace Insurance_company.ViewModels
     class SearchPolicyViewModel : BaseViewModel
     {
 
-        private ObservableCollection<PolicySet> _policies;
+        private ObservableCollection<ServiceReference.PolicySet> _policies;
 
-        public ObservableCollection<PolicySet> Policies
+        public ObservableCollection<ServiceReference.PolicySet> Policies
         {
             get { return _policies; }
             set
@@ -41,8 +40,8 @@ namespace Insurance_company.ViewModels
 
         }
 
-        private ObservableCollection<ClientSet> _clients;
-        public ObservableCollection<ClientSet> Clients
+        private ObservableCollection<ServiceReference.ClientSet> _clients;
+        public ObservableCollection<ServiceReference.ClientSet> Clients
         {
             get { return _clients; }
             set
@@ -57,9 +56,9 @@ namespace Insurance_company.ViewModels
 
         List<EntityParameter> PolicyParameters = new List<EntityParameter>();
 
-        private PolicySet _policy;
+        private ServiceReference.PolicySet _policy;
 
-        public PolicySet Policy
+        public ServiceReference.PolicySet Policy
         {
             get { return _policy; }
             set
@@ -75,14 +74,14 @@ namespace Insurance_company.ViewModels
         public ICommand SearchPolicyCommand { get { return new DelegateCommand(OnPolicySearch); } }
 
         public SearchPolicyViewModel() {
-            _policy = new PolicySet();
+            _policy = new ServiceReference.PolicySet();
             Task.Factory.StartNew(() =>
             {
-                using (var db = new InsuranceCompanyEntities())
-                {
-                    ;
-                    Clients = new ObservableCollection<ClientSet>(db.ClientSet);
-                }
+                //using (var db = new InsuranceCompanyEntities())
+                //{
+                //    ;
+                //    Clients = new ObservableCollection<ClientSet>(db.ClientSet);
+                //}
             });
         }
 
@@ -128,7 +127,7 @@ namespace Insurance_company.ViewModels
             if (policyQuery == null) // If nothing was specified, return
                 return;
 
-            _policies = new ObservableCollection<PolicySet>();
+            _policies = new ObservableCollection<ServiceReference.PolicySet>();
 
             Task.Factory.StartNew(() =>
             {
@@ -148,7 +147,7 @@ namespace Insurance_company.ViewModels
                         {
                             while (rdr.Read()) // Reading records found
                             {
-                                PolicySet policy = new PolicySet();
+                                ServiceReference.PolicySet policy = new ServiceReference.PolicySet();
                                 policy.PolicyId = (int)rdr["PolicyId"];
                                 policy.Duration = (int)rdr["Duration"];
                                 policy.StartDate = (DateTime)rdr["StartDate"];

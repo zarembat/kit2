@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Insurance_company.Models;
 using System.Windows.Input;
 using Insurance_company.Helpers;
 using Insurance_company.Views;
@@ -16,9 +15,9 @@ namespace Insurance_company.ViewModels
     class EditClientViewModel : BaseViewModel
     {
 
-        private InsuranceCompanyEntities db = new InsuranceCompanyEntities();
-        private ClientSet _client;
-        public ClientSet Client
+        // private InsuranceCompanyEntities db = new InsuranceCompanyEntities();
+        private ServiceReference.ClientSet _client;
+        public ServiceReference.ClientSet Client
         {
             get { return _client; }
             set
@@ -31,8 +30,8 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private AdressSet _address;
-        public AdressSet Address
+        private ServiceReference.AdressSet _address;
+        public ServiceReference.AdressSet Address
         {
             get { return _address; }
             set
@@ -51,38 +50,38 @@ namespace Insurance_company.ViewModels
         {
         }
 
-        public EditClientViewModel(ClientSet client) // This is called from ClientsViewModel when an item is clicked twice
+        public EditClientViewModel(ServiceReference.ClientSet client) // This is called from ClientsViewModel when an item is clicked twice
         {
             _client = client;
-            using (var db = new InsuranceCompanyEntities())
-            {
-                var address = db.AdressSet.Where(a => a.AdressId == client.AdressAdressId).FirstOrDefault(); // Looking for an Address
-                if (address != null)
-                    _address = address;
-                else
-                    MessageBox.Show("The address was not found for this client (ID: " + client.AdressAdressId + "!");
-            }
+            //using (var db = new InsuranceCompanyEntities())
+            //{
+            //    var address = db.AdressSet.Where(a => a.AdressId == client.AdressAdressId).FirstOrDefault(); // Looking for an Address
+            //    if (address != null)
+            //        _address = address;
+            //    else
+            //        MessageBox.Show("The address was not found for this client (ID: " + client.AdressAdressId + "!");
+            //}
         }
 
         private void OnCustomerSave(object parameter)
         {
             Task.Factory.StartNew(() =>
             {
-                using (var db = new InsuranceCompanyEntities())
-                {
-                    try
-                    {
-                        var client = db.ClientSet.Find(Client.ClientId); // Looking for an old entry in the database
-                        var address = db.AdressSet.Find(Address.AdressId);
-                        db.Entry(client).CurrentValues.SetValues(Client); // Updating values
-                        db.Entry(address).CurrentValues.SetValues(Address);
-                        db.SaveChanges(); // Saving changes
-                    }
-                    catch (DbEntityValidationException e)
-                    {
-                        MessageBox.Show(e.Message);
-                    }
-                }
+                //using (var db = new InsuranceCompanyEntities())
+                //{
+                //    try
+                //    {
+                //        var client = db.ClientSet.Find(Client.ClientId); // Looking for an old entry in the database
+                //        var address = db.AdressSet.Find(Address.AdressId);
+                //        db.Entry(client).CurrentValues.SetValues(Client); // Updating values
+                //        db.Entry(address).CurrentValues.SetValues(Address);
+                //        db.SaveChanges(); // Saving changes
+                //    }
+                //    catch (DbEntityValidationException e)
+                //    {
+                //        MessageBox.Show(e.Message);
+                //    }
+                //}
             }).ContinueWith(t =>
             {
                 MessageBox.Show("Client edited successfully!");

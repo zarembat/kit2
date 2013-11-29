@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls;
 using Insurance_company.Helpers;
-using Insurance_company.Models;
 using Insurance_company.Views;
 using System.Windows.Data;
 using System.Data.Entity.Infrastructure;
@@ -31,9 +30,9 @@ namespace Insurance_company.ViewModels
         List<EntityParameter> ClientParameters = new List<EntityParameter>();
         List<EntityParameter> AddressParameters = new List<EntityParameter>();
 
-        private ObservableCollection<ClientSet> _clients = new ObservableCollection<ClientSet>();
+        private ObservableCollection<ServiceReference.ClientSet> _clients = new ObservableCollection<ServiceReference.ClientSet>();
 
-        public ObservableCollection<ClientSet> Clients
+        public ObservableCollection<ServiceReference.ClientSet> Clients
         {
             get { return _clients; }
             set
@@ -47,8 +46,8 @@ namespace Insurance_company.ViewModels
 
         }
 
-        private ClientSet _client;
-        public ClientSet Client
+        private ServiceReference.ClientSet _client;
+        public ServiceReference.ClientSet Client
         {
             get { return _client; }
             set
@@ -61,8 +60,8 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private AdressSet _address;
-        public AdressSet Address
+        private ServiceReference.AdressSet _address;
+        public ServiceReference.AdressSet Address
         {
             get { return _address; }
             set
@@ -172,8 +171,8 @@ namespace Insurance_company.ViewModels
         public ICommand SearchClientCommand { get { return new DelegateCommand(OnCustomerSearch); } }
 
         public SearchClientViewModel() {
-            _client = new ClientSet();
-            _address = new AdressSet();
+            _client = new ServiceReference.ClientSet();
+            _address = new ServiceReference.AdressSet();
         }
 
         private void OnCustomerSearch(object parameter)
@@ -226,7 +225,7 @@ namespace Insurance_company.ViewModels
                     ClientsWindow cw = new ClientsWindow();
                     cw.DataContext = new ClientsViewModel(_clients);
                     cw.ShowDialog();
-                    _clients = new ObservableCollection<ClientSet>(); // Zerujemy kolekcję w razie kolejnego wyszukiwania
+                    _clients = new ObservableCollection<ServiceReference.ClientSet>(); // Zerujemy kolekcję w razie kolejnego wyszukiwania
                 }
                 else
                     MessageBox.Show("No clients matching these criteria were found!");
@@ -254,7 +253,7 @@ namespace Insurance_company.ViewModels
                     {
                         while (rdr.Read())
                         {
-                            ClientSet client = new ClientSet();
+                            ServiceReference.ClientSet client = new ServiceReference.ClientSet();
                             client.ClientId = (int)rdr["ClientId"];
                             client.Surname = rdr["Surname"].ToString();
                             client.Name = rdr["Name"].ToString();

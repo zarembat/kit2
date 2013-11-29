@@ -12,7 +12,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Insurance_company.ViewModels;
-using Insurance_company.Models;
 
 namespace Insurance_company.Views
 {
