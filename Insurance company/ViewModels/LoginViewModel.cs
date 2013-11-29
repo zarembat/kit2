@@ -42,11 +42,13 @@ namespace Insurance_company.ViewModels
         private void OnLogin(object Parameter) {
 
             Login LoginWindow = Parameter as Login; // We pass window object to get the password
-            EmployeeSet Employee = null;
+            ServiceReference.EmployeeSet Employee = null;
+            System.Data.Services.Client.DataServiceQuery<ServiceReference.EmployeeSet> employeeQuery;
+            CollectionViewSource ordersViewSource;
             var LoginTask = Task.Factory.StartNew(() =>
             {
                 // Siema
-                using (var db = new InsuranceCompanyEntities())
+                using (var db = new ServiceReference.InsuranceCompanyEntities())
                 {
                     Employee = db.EmployeeSet.Where(e => e.Login == UserName && e.Password == LoginWindow.PasswordInput.Password).FirstOrDefault(); // Looking for an employee in the database
                     if (Employee == null)

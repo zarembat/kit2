@@ -1,0 +1,181 @@
+﻿<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices m:DataServiceVersion="1.0" m:MaxDataServiceVersion="3.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+    <Schema Namespace="InsuranceCompanyModel" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityType Name="AdressSet">
+        <Key>
+          <PropertyRef Name="AdressId" />
+        </Key>
+        <Property Name="AdressId" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="Identity" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Town" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Street" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="HouseNumber" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="ZipCode" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="HouseSet" Relationship="InsuranceCompanyModel.FK_AdressSetHouseSet" ToRole="HouseSet" FromRole="AdressSet" />
+        <NavigationProperty Name="ClientSet" Relationship="InsuranceCompanyModel.FK_ClientAdress" ToRole="ClientSet" FromRole="AdressSet" />
+      </EntityType>
+      <EntityType Name="CarSet">
+        <Key>
+          <PropertyRef Name="ObjectId" />
+        </Key>
+        <Property Name="ObjectId" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="Identity" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Type" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Brand" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Year" Type="Edm.Int32" Nullable="false" />
+        <Property Name="VinNumber" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Engine" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Policy_PolicyId" Type="Edm.Int32" Nullable="false" />
+        <NavigationProperty Name="PolicySet" Relationship="InsuranceCompanyModel.FK_CarPolicy" ToRole="PolicySet" FromRole="CarSet" />
+      </EntityType>
+      <EntityType Name="ClientSet">
+        <Key>
+          <PropertyRef Name="ClientId" />
+        </Key>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="Identity" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Surname" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Name" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="PESEL" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="AdressAdressId" Type="Edm.Int32" Nullable="false" />
+        <NavigationProperty Name="AdressSet" Relationship="InsuranceCompanyModel.FK_ClientAdress" ToRole="AdressSet" FromRole="ClientSet" />
+        <NavigationProperty Name="PolicySet" Relationship="InsuranceCompanyModel.FK_PolicyClient" ToRole="PolicySet" FromRole="ClientSet" />
+      </EntityType>
+      <EntityType Name="EmployeeSet">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="Identity" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Login" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Password" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Name" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Surname" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+      </EntityType>
+      <EntityType Name="HouseSet">
+        <Key>
+          <PropertyRef Name="ObjectId" />
+        </Key>
+        <Property Name="ObjectId" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="Identity" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Year" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Size" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Type" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Policy_PolicyId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="AdressSet_AdressId" Type="Edm.Int32" Nullable="false" />
+        <NavigationProperty Name="AdressSet" Relationship="InsuranceCompanyModel.FK_AdressSetHouseSet" ToRole="AdressSet" FromRole="HouseSet" />
+        <NavigationProperty Name="PolicySet" Relationship="InsuranceCompanyModel.FK_HousePolicy" ToRole="PolicySet" FromRole="HouseSet" />
+      </EntityType>
+      <EntityType Name="PolicySet">
+        <Key>
+          <PropertyRef Name="PolicyId" />
+        </Key>
+        <Property Name="PolicyId" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="Identity" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Duration" Type="Edm.Int32" Nullable="false" />
+        <Property Name="StartDate" Type="Edm.DateTime" Nullable="false" Precision="3" />
+        <Property Name="EndDate" Type="Edm.DateTime" Nullable="false" Precision="3" />
+        <Property Name="ObjectType" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="ClientClientId" Type="Edm.Int32" Nullable="false" />
+        <NavigationProperty Name="CarSet" Relationship="InsuranceCompanyModel.FK_CarPolicy" ToRole="CarSet" FromRole="PolicySet" />
+        <NavigationProperty Name="ClientSet" Relationship="InsuranceCompanyModel.FK_PolicyClient" ToRole="ClientSet" FromRole="PolicySet" />
+        <NavigationProperty Name="HouseSet" Relationship="InsuranceCompanyModel.FK_HousePolicy" ToRole="HouseSet" FromRole="PolicySet" />
+      </EntityType>
+      <EntityType Name="sysdiagrams">
+        <Key>
+          <PropertyRef Name="diagram_id" />
+        </Key>
+        <Property Name="name" Type="Edm.String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+        <Property Name="principal_id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="diagram_id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="Identity" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="version" Type="Edm.Int32" />
+        <Property Name="definition" Type="Edm.Binary" MaxLength="Max" FixedLength="false" />
+      </EntityType>
+      <Association Name="FK_AdressSetHouseSet">
+        <End Type="InsuranceCompanyModel.AdressSet" Role="AdressSet" Multiplicity="1" />
+        <End Type="InsuranceCompanyModel.HouseSet" Role="HouseSet" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="AdressSet">
+            <PropertyRef Name="AdressId" />
+          </Principal>
+          <Dependent Role="HouseSet">
+            <PropertyRef Name="AdressSet_AdressId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="FK_ClientAdress">
+        <End Type="InsuranceCompanyModel.AdressSet" Role="AdressSet" Multiplicity="1" />
+        <End Type="InsuranceCompanyModel.ClientSet" Role="ClientSet" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="AdressSet">
+            <PropertyRef Name="AdressId" />
+          </Principal>
+          <Dependent Role="ClientSet">
+            <PropertyRef Name="AdressAdressId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="FK_CarPolicy">
+        <End Type="InsuranceCompanyModel.PolicySet" Role="PolicySet" Multiplicity="1" />
+        <End Type="InsuranceCompanyModel.CarSet" Role="CarSet" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="PolicySet">
+            <PropertyRef Name="PolicyId" />
+          </Principal>
+          <Dependent Role="CarSet">
+            <PropertyRef Name="Policy_PolicyId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="FK_PolicyClient">
+        <End Type="InsuranceCompanyModel.ClientSet" Role="ClientSet" Multiplicity="1" />
+        <End Type="InsuranceCompanyModel.PolicySet" Role="PolicySet" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="ClientSet">
+            <PropertyRef Name="ClientId" />
+          </Principal>
+          <Dependent Role="PolicySet">
+            <PropertyRef Name="ClientClientId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="FK_HousePolicy">
+        <End Type="InsuranceCompanyModel.PolicySet" Role="PolicySet" Multiplicity="1" />
+        <End Type="InsuranceCompanyModel.HouseSet" Role="HouseSet" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="PolicySet">
+            <PropertyRef Name="PolicyId" />
+          </Principal>
+          <Dependent Role="HouseSet">
+            <PropertyRef Name="Policy_PolicyId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+    </Schema>
+    <Schema Namespace="Service" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityContainer Name="InsuranceCompanyEntities" m:IsDefaultEntityContainer="true" p6:LazyLoadingEnabled="true" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+        <EntitySet Name="AdressSet" EntityType="InsuranceCompanyModel.AdressSet" />
+        <EntitySet Name="CarSet" EntityType="InsuranceCompanyModel.CarSet" />
+        <EntitySet Name="ClientSet" EntityType="InsuranceCompanyModel.ClientSet" />
+        <EntitySet Name="EmployeeSet" EntityType="InsuranceCompanyModel.EmployeeSet" />
+        <EntitySet Name="HouseSet" EntityType="InsuranceCompanyModel.HouseSet" />
+        <EntitySet Name="PolicySet" EntityType="InsuranceCompanyModel.PolicySet" />
+        <EntitySet Name="sysdiagrams" EntityType="InsuranceCompanyModel.sysdiagrams" />
+        <AssociationSet Name="FK_AdressSetHouseSet" Association="InsuranceCompanyModel.FK_AdressSetHouseSet">
+          <End Role="AdressSet" EntitySet="AdressSet" />
+          <End Role="HouseSet" EntitySet="HouseSet" />
+        </AssociationSet>
+        <AssociationSet Name="FK_ClientAdress" Association="InsuranceCompanyModel.FK_ClientAdress">
+          <End Role="AdressSet" EntitySet="AdressSet" />
+          <End Role="ClientSet" EntitySet="ClientSet" />
+        </AssociationSet>
+        <AssociationSet Name="FK_CarPolicy" Association="InsuranceCompanyModel.FK_CarPolicy">
+          <End Role="CarSet" EntitySet="CarSet" />
+          <End Role="PolicySet" EntitySet="PolicySet" />
+        </AssociationSet>
+        <AssociationSet Name="FK_PolicyClient" Association="InsuranceCompanyModel.FK_PolicyClient">
+          <End Role="ClientSet" EntitySet="ClientSet" />
+          <End Role="PolicySet" EntitySet="PolicySet" />
+        </AssociationSet>
+        <AssociationSet Name="FK_HousePolicy" Association="InsuranceCompanyModel.FK_HousePolicy">
+          <End Role="HouseSet" EntitySet="HouseSet" />
+          <End Role="PolicySet" EntitySet="PolicySet" />
+        </AssociationSet>
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>
