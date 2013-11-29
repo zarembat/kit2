@@ -5,7 +5,7 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Service\Service.csproj", "{DFA5EB8C-0630-4660-9D95-5BD5252A247E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Insurance company", "E:\K&T Insurance\Insurance company\Insurance company.csproj", "{6C013B04-46B1-4679-BA85-5CBD9928F9A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Insurance company", "Insurance company\Insurance company.csproj", "{6C013B04-46B1-4679-BA85-5CBD9928F9A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,212 @@
+﻿<Window x:Class="Insurance_company.Views.EditPolicy"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        Title="EditPolicy" Height="500" Width="580">
+    <Window.Resources>
+        <Style TargetType="TextBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}" />
+                    <Setter Property="BorderBrush" Value="Red"/>
+                    <Setter Property="BorderThickness" Value="1" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"></RowDefinition>
+            <RowDefinition Height="123*"></RowDefinition>
+            <RowDefinition Height="158*"></RowDefinition>
+            <RowDefinition Height="89*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <LinearGradientBrush.GradientStops>
+                    <GradientStop Color="LightBlue" Offset="0"/>
+                    <GradientStop Color="#FF0A81B9" Offset="1"/>
+                </LinearGradientBrush.GradientStops>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <Image Height="100" HorizontalAlignment="Left" VerticalAlignment="Top" Source="pack://application:,,,/Insurance company;component/Resources/logo.png" Margin="5,15,0,0" Grid.RowSpan="2" Width="158"/>
+        <Grid Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="30,0,0,0" Height="120" Width="230">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="97"></ColumnDefinition>
+                <ColumnDefinition Width="133"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="136" FontWeight="Bold" FontSize="15" Height="30">Edit policy</Label>
+
+            <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Grid.ColumnSpan="2" Height="30">Client</Label>
+            <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" SelectedValuePath="ClientId" ItemsSource="{Binding Clients}" SelectedValue="{Binding Policy.ClientClientId, UpdateSourceTrigger=PropertyChanged}" Height="22" />
+
+            <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Grid.ColumnSpan="2" Height="30">Object</Label>
+            <ComboBox Name="ObjectTypeComboBox" SelectionChanged="ObjectTypeChanged" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" IsEnabled="False" Width="141" Height="22" Margin="0,0,-8,0">
+                <ComboBox.ItemsSource>
+                    <x:Array Type="{x:Type sys:String}">
+                        <sys:String>Car</sys:String>
+                        <sys:String>House</sys:String>
+                    </x:Array>
+                </ComboBox.ItemsSource>
+                <ComboBox.SelectedItem>
+                    <Binding Path="Policy.ObjectType" Mode="TwoWay" ValidatesOnDataErrors="True" />
+                </ComboBox.SelectedItem>
+            </ComboBox>
+
+            <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Grid.ColumnSpan="2" Height="30">Duration (Y)</Label>
+            <ComboBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="duration" Text="{Binding Policy.Duration, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" Height="22" Margin="0,0,-8,0">
+                <ComboBox.ItemsSource>
+                    <x:Array Type="{x:Type sys:Int32}">
+                        <sys:Int32>1</sys:Int32>
+                        <sys:Int32>2</sys:Int32>
+                        <sys:Int32>3</sys:Int32>
+                        <sys:Int32>4</sys:Int32>
+                        <sys:Int32>5</sys:Int32>
+                    </x:Array>
+                </ComboBox.ItemsSource>
+            </ComboBox>
+        </Grid>
+
+        <Grid Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="30,0,0,0" Height="183" Width="230" Name="CarGrid" Grid.RowSpan="2" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="98"></ColumnDefinition>
+                <ColumnDefinition Width="132"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" FontSize="15" VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="49">Brand</Label>
+            <TextBox Grid.Row="0" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Bottom" Width="141" Name="Brand" Text="{Binding Car.Brand, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged }" Height="22" Margin="0,0,-9,0" />
+
+            <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Grid.ColumnSpan="2" Height="30">Year</Label>
+            <TextBox Grid.Row="1" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Bottom" Width="141" Name="year" Text="{Binding Car.Year, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" Height="22" Margin="0,0,-9,0"/>
+
+            <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Grid.ColumnSpan="2" Height="30">VIN number</Label>
+            <TextBox Grid.Row="2" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Bottom" Width="141" Name="vin" Text="{Binding Car.VinNumber, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" Height="22" Margin="0,0,-9,0" />
+
+            <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Grid.ColumnSpan="2" Height="30">Type</Label>
+            <ComboBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="type" Text="{Binding Car.Type, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" Height="22" Margin="0,0,-9,0">
+                <ComboBox.ItemsSource>
+                    <x:Array Type="{x:Type sys:String}">
+                        <sys:String>Sedan</sys:String>
+                        <sys:String>Combi</sys:String>
+                        <sys:String>Hatchback</sys:String>
+                        <sys:String>Liftback</sys:String>
+                        <sys:String>Truck</sys:String>
+                    </x:Array>
+                </ComboBox.ItemsSource>
+            </ComboBox>
+
+            <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Grid.ColumnSpan="2" Height="30">Engine</Label>
+            <TextBox Grid.Row="4" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Bottom" Width="141" Name="engine" Text="{Binding Car.Engine, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" Height="22" Margin="0,0,-9,0" />
+            <Button Grid.Row="5" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Bottom" Width="140" FontSize="15" Command="{Binding SavePolicyCommand}" Height="24" Content="Save changes" Margin="0,0,-8,0">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="IsEnabled" Value="false" />
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding ElementName=duration, Path=(Validation.HasError)}" Value="false" />
+                                    <Condition Binding="{Binding ElementName=Brand, Path=(Validation.HasError)}" Value="false" />
+                                    <Condition Binding="{Binding ElementName=year, Path=(Validation.HasError)}" Value="false" />
+                                    <Condition Binding="{Binding ElementName=vin, Path=(Validation.HasError)}" Value="false" />
+                                    <Condition Binding="{Binding ElementName=type, Path=(Validation.HasError)}" Value="false" />
+                                    <Condition Binding="{Binding ElementName=engine, Path=(Validation.HasError)}" Value="false" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="IsEnabled" Value="true" />
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Grid>
+
+        <Grid Name="HouseGrid" Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="30,0,0,0" Height="158" Width="473" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80 "></ColumnDefinition>
+                <ColumnDefinition Width="150"></ColumnDefinition>
+                <ColumnDefinition Width="107"></ColumnDefinition>
+                <ColumnDefinition Width="134"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" FontSize="15" VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="36">Size</Label>
+            <TextBox Grid.Row="0" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Bottom" Width="141" Name="size" Text="{Binding House.Size, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" Height="22"/>
+
+            <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Grid.ColumnSpan="2" Height="30">Year</Label>
+            <TextBox Grid.Row="1" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Bottom" Width="141" Name="yearh" Text="{Binding House.Year, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" Height="22"/>
+
+            <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Grid.ColumnSpan="2" Height="30">Type</Label>
+            <ComboBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="typeh" Text="{Binding House.Type, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" Height="22">
+                <ComboBox.ItemsSource>
+                    <x:Array Type="{x:Type sys:String}">
+                        <sys:String>Detached house</sys:String>
+                        <sys:String>Semi-detached house</sys:String>
+                        <sys:String>Terrace house</sys:String>
+                        <sys:String>Flat</sys:String>
+                    </x:Array>
+                </ComboBox.ItemsSource>
+            </ComboBox>
+
+            <Label Grid.Row="0" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Height="30">Town</Label>
+            <TextBox Grid.Row="0" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="town" Text="{Binding Address.Town, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" Height="22" Margin="0,0,-7,0" />
+
+            <Label Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Height="30">Street</Label>
+            <TextBox Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="street" Text="{Binding Address.Street, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" Height="22" Margin="0,0,-7,0" />
+
+
+            <Label Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="111" FontSize="15" Grid.ColumnSpan="2" Height="30">House number</Label>
+            <TextBox Grid.Row="2" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="houseNumber" Text="{Binding Address.HouseNumber, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" Height="22" Margin="0,0,-7,0"/>
+
+            <Label Grid.Row="3" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Height="30">Zip Code</Label>
+            <TextBox Grid.Row="3" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="zipcode" Text="{Binding Address.ZipCode, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" Height="22" Margin="0,0,-7,0" />
+            <Button Grid.Row="4" Width="141" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="15" FontWeight="Normal" Command="{Binding SavePolicyCommand}" Height="26" Content="Save changes" Grid.Column="1" Margin="1,0,0,5">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="IsEnabled" Value="false" />
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding ElementName=clientID, Path=(Validation.HasError)}" Value="false" />
+                                    <Condition Binding="{Binding ElementName=duration, Path=(Validation.HasError)}" Value="false" />
+                                    <Condition Binding="{Binding ElementName=size, Path=(Validation.HasError)}" Value="false" />
+                                    <Condition Binding="{Binding ElementName=yearh, Path=(Validation.HasError)}" Value="false" />
+                                    <Condition Binding="{Binding ElementName=town, Path=(Validation.HasError)}" Value="false" />
+                                    <Condition Binding="{Binding ElementName=street, Path=(Validation.HasError)}" Value="false" />
+                                    <Condition Binding="{Binding ElementName=houseNumber, Path=(Validation.HasError)}" Value="false" />
+                                    <Condition Binding="{Binding ElementName=zipcode, Path=(Validation.HasError)}" Value="false" />
+                                    <Condition Binding="{Binding ElementName=typeh, Path=(Validation.HasError)}" Value="false" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="IsEnabled" Value="true" />
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Grid>
+    </Grid>
+</Window>

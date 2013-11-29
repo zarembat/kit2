@@ -1,0 +1,32 @@
+﻿<Window x:Class="Insurance_company.Views.ClientsWindow"
+        xmlns:viewModels="clr-namespace:Insurance_company.ViewModels"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Search results: Clients" Height="500" Width="700">
+    <Window.Resources>
+        <viewModels:ClientsViewModel x:Key="ClientsVM" />
+    </Window.Resources>
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <LinearGradientBrush.GradientStops>
+                    <GradientStop Color="LightBlue" Offset="0"/>
+                    <GradientStop Color="#FF0A81B9" Offset="1"/>
+                </LinearGradientBrush.GradientStops>
+            </LinearGradientBrush>
+        </Grid.Background>
+        <StackPanel>
+            <DataGrid Margin="130, 50, 130, 0" Name="ClientsGrid" ItemsSource="{Binding Clients}" IsReadOnly="True" AutoGenerateColumns="False" ColumnWidth="101">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Client ID" Binding="{Binding ClientId}"/>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Surname" Binding="{Binding Surname}"/>
+                    <DataGridTextColumn Header="PESEL" Binding="{Binding PESEL}" />
+                </DataGrid.Columns>
+                <DataGrid.InputBindings>
+                    <MouseBinding Gesture="LeftDoubleClick" Command="{Binding ClientsGridLeftDoubleClickCommand}" CommandParameter="{Binding ElementName=ClientsGrid, Path=SelectedItem}" />
+                </DataGrid.InputBindings>
+            </DataGrid>
+        </StackPanel>
+    </Grid>
+</Window>
