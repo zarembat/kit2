@@ -20,6 +20,7 @@ using System.Data.EntityClient;
 using System.Data.Metadata.Edm;
 using System.Reflection;
 
+using System.Data.Services.Client;
 using System.Data.Objects;
 
 namespace Insurance_company.ViewModels
@@ -30,9 +31,9 @@ namespace Insurance_company.ViewModels
         List<EntityParameter> ClientParameters = new List<EntityParameter>();
         List<EntityParameter> AddressParameters = new List<EntityParameter>();
 
-        private ObservableCollection<ServiceReference.ClientSet> _clients = new ObservableCollection<ServiceReference.ClientSet>();
+        private ObservableCollection <ServiceReference.ClientSet> _clients = new ObservableCollection <ServiceReference.ClientSet>();
 
-        public ObservableCollection<ServiceReference.ClientSet> Clients
+        public ObservableCollection <ServiceReference.ClientSet> Clients
         {
             get { return _clients; }
             set
@@ -225,7 +226,7 @@ namespace Insurance_company.ViewModels
                     ClientsWindow cw = new ClientsWindow();
                     cw.DataContext = new ClientsViewModel(_clients);
                     cw.ShowDialog();
-                    _clients = new ObservableCollection<ServiceReference.ClientSet>(); // Zerujemy kolekcję w razie kolejnego wyszukiwania
+                    _clients = new ObservableCollection <ServiceReference.ClientSet>(); // Zerujemy kolekcję w razie kolejnego wyszukiwania
                 }
                 else
                     MessageBox.Show("No clients matching these criteria were found!");

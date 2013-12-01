@@ -23,6 +23,7 @@ namespace Service
             config.SetEntitySetAccessRule("*", EntitySetRights.All);
             // config.SetServiceOperationAccessRule("MyServiceOperation", ServiceOperationRights.All);
             config.DataServiceBehavior.MaxProtocolVersion = DataServiceProtocolVersion.V3;
+            config.SetServiceOperationAccessRule("*", ServiceOperationRights.All); 
         }
     }
 }
