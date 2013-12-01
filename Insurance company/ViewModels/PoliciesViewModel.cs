@@ -8,13 +8,14 @@ using Insurance_company.Helpers;
 using Insurance_company.Views;
 using System.Windows;
 using System.Collections.ObjectModel;
+using Insurance_company.ServiceReference;
 
 namespace Insurance_company.ViewModels
 {
     class PoliciesViewModel : BaseViewModel
     {
         private ObservableCollection<ServiceReference.PolicySet> _policies;
-
+        InsuranceCompanyEntities context = new InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
         public ObservableCollection<ServiceReference.PolicySet> Policies
         {
             get { return _policies; }
@@ -32,7 +33,7 @@ namespace Insurance_company.ViewModels
         public void refresh(System.Data.Entity.DbSet<ServiceReference.PolicySet> policies) // Refreshing the list of policies in the DataGrid
         {
             //Policies = new ObservableCollection<PolicySet>(policies);
-            ObservableCollection<ServiceReference.PolicySet> policiess = new ObservableCollection<ServiceReference.PolicySet>(policies);
+            ObservableCollection<PolicySet> policiess = new ObservableCollection<PolicySet>(policies);
             for (int i = Policies.Count; i < policies.Count(); i++)
             {
                 Policies.Add(policiess[i]);
@@ -43,10 +44,10 @@ namespace Insurance_company.ViewModels
 
         private void OnPoliciesGridLeftDoubleClick(object parameter) // Clicking twice on a policy item opens Edit Window
         {
-            if (!(parameter is ServiceReference.PolicySet))
+            if (!(parameter is PolicySet))
                 return;
             EditPolicy EditPolicyWindow = new EditPolicy();
-            EditPolicyWindow.DataContext = new EditPolicyViewModel(parameter as ServiceReference.PolicySet); // Passing policy object which was clicked to the Edit Window
+            EditPolicyWindow.DataContext = new EditPolicyViewModel(parameter as PolicySet); // Passing policy object which was clicked to the Edit Window
             EditPolicyWindow.ShowDialog();
         }
 
@@ -54,10 +55,9 @@ namespace Insurance_company.ViewModels
         {
             var GetPoliciesTask = Task.Factory.StartNew(() =>
             {
-                //using (var db = new InsuranceCompanyEntities())
-                //{
-                //    _policies = new ObservableCollection<PolicySet>(db.PolicySet);
-                //}
+                
+                _policies = new ObservableCollection<PolicySet>(context.PolicySet);
+                
             });
             GetPoliciesTask.Wait();
         }

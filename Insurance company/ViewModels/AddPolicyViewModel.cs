@@ -8,17 +8,19 @@ using Insurance_company.Helpers;
 using System.Windows;
 using System.Data.Entity.Validation;
 using System.Collections.ObjectModel;
+using Insurance_company.ServiceReference;
 
 namespace Insurance_company.ViewModels
 {
     class AddPolicyViewModel : BaseViewModel
     {
-        private ServiceReference.PolicySet _policy;
+        InsuranceCompanyEntities context = new InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
+        private PolicySet _policy;
 
         private const string CAR = "Car";
         private const string HOUSE = "House";
 
-        public ServiceReference.PolicySet Policy
+        public PolicySet Policy
         {
             get { return _policy; }
             set
@@ -31,8 +33,8 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private ServiceReference.HouseSet _house;
-        public ServiceReference.HouseSet House
+        private HouseSet _house;
+        public HouseSet House
         {
             get { return _house; }
             set
@@ -45,8 +47,8 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private ServiceReference.AdressSet _address;
-        public ServiceReference.AdressSet Address
+        private AdressSet _address;
+        public AdressSet Address
         {
             get { return _address; }
             set
@@ -59,8 +61,8 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private ServiceReference.CarSet _car;
-        public ServiceReference.CarSet Car
+        private CarSet _car;
+        public CarSet Car
         {
             get { return _car; }
             set
@@ -73,8 +75,8 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private ObservableCollection<ServiceReference.ClientSet> _clients;
-        public ObservableCollection<ServiceReference.ClientSet> Clients
+        private ObservableCollection<ClientSet> _clients;
+        public ObservableCollection<ClientSet> Clients
         {
             get { return _clients; }
             set
@@ -95,10 +97,10 @@ namespace Insurance_company.ViewModels
 
         private void setEntities()
         {
-            _policy = new ServiceReference.PolicySet();
-            _car = new ServiceReference.CarSet();
-            _house = new ServiceReference.HouseSet();
-            _address = new ServiceReference.AdressSet();
+            _policy = new PolicySet();
+            _car = new CarSet();
+            _house = new HouseSet();
+            _address = new AdressSet();
 
             Task.Factory.StartNew(() =>
             {
@@ -112,22 +114,21 @@ namespace Insurance_company.ViewModels
 
         private async Task savePolicy()
         {
-            //using (var db = new ServiceReference.InsuranceCompanyEntities())
-            //{
-            //    DateTime now = DateTime.Now;
-            //    Policy.StartDate = now; // Setting StartDate
-            //    Policy.EndDate = now.AddYears(Policy.Duration); // Setting EndDate
-            //    db.PolicySet.Add(Policy);
-            //    if (Policy.ObjectType.Equals(CAR)) // If we are adding car policy
-            //    {
-            //        db.CarSet.Add(Car);
-            //    }
-            //    else if (Policy.ObjectType.Equals(HOUSE)) // If we are adding house policy
-            //    {
-            //        db.AdressSet.Add(Address);
-            //        House.AdressSet = Address; // Assign Address to the house
-            //        db.HouseSet.Add(House);
-            //    }
+            
+                DateTime now = DateTime.Now;
+                Policy.StartDate = now; // Setting StartDate
+                Policy.EndDate = now.AddYears(Policy.Duration); // Setting EndDate
+                context.AddObject("PolicySet", Policy);
+                if (Policy.ObjectType.Equals(CAR)) // If we are adding car policy
+                {
+                    context.AddObject("CarSet", Car);
+                }
+                else if (Policy.ObjectType.Equals(HOUSE)) // If we are adding house policy
+                {
+                    context.AddObject("AdressSet",Address);
+                    House.AdressSet = Address; // Assign Address to the house
+                    context.AddObject("HouseSet", House);
+                }
             //    try
             //    {
             //        await db.SaveChangesAsync();   // Save changes to the database                 
@@ -146,10 +147,10 @@ namespace Insurance_company.ViewModels
             {
                 MessageBox.Show("Policy added successfully!");
                 // Clear the form:
-                Policy = new ServiceReference.PolicySet();
-                Address = new ServiceReference.AdressSet();
-                House = new ServiceReference.HouseSet();
-                Car = new ServiceReference.CarSet();
+                Policy = new PolicySet();
+                Address = new AdressSet();
+                House = new HouseSet();
+                Car = new CarSet();
             }, TaskContinuationOptions.OnlyOnRanToCompletion);
 
         }

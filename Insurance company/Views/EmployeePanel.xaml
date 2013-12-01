@@ -36,7 +36,7 @@
                 <StackPanel DataContext="{StaticResource ClientsVM}">
                     <Image HorizontalAlignment="Left" VerticalAlignment="Top" Source="pack://application:,,,/Insurance company;component/Resources/logo.png" Height="100" Margin="5,15,0,0"/>
 
-                    <DataGrid ScrollViewer.CanContentScroll="True" Height="300" ScrollViewer.VerticalScrollBarVisibility="Auto" Name="ClientsGrid"  IsReadOnly="True" Margin="130,0" AutoGenerateColumns="False" ColumnWidth="101">
+                    <DataGrid ScrollViewer.CanContentScroll="True" Height="300" ScrollViewer.VerticalScrollBarVisibility="Auto" Name="ClientsGrid" ItemsSource="{Binding Clients}"  IsReadOnly="True" Margin="130,0" AutoGenerateColumns="False" ColumnWidth="101">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Client ID" Binding="{Binding ClientId}"/>
                             <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Insurance_company.ViewModels;
+using Insurance_company.ServiceReference;
 
 namespace Insurance_company.Views
 {
@@ -21,14 +22,14 @@ namespace Insurance_company.Views
     public partial class EmployeePanel : Window
     {
 
-        private ServiceReference.EmployeeSet _employee;
-
+        private EmployeeSet _employee;
+        InsuranceCompanyEntities context = new InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
         public EmployeePanel()
         {
             InitializeComponent();
         }
 
-        public EmployeePanel(ServiceReference.EmployeeSet employee)
+        public EmployeePanel(EmployeeSet employee)
             : this() // Wywołujemy domyślny konstruktor
         {
             this._employee = employee;
@@ -36,28 +37,27 @@ namespace Insurance_company.Views
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //using (var db = new InsuranceCompanyEntities())
-            //{
-            //    if (Tabs.SelectedIndex == 0)
-            //    {
-            //        if (ClientsGrid != null && ClientsGrid.DataContext != null)
-            //            ((ClientsViewModel)ClientsGrid.DataContext).refresh(db.ClientSet);
-            //    }
-            //    else if (Tabs.SelectedIndex == 1)
-            //    {
-            //        if (PoliciesGrid != null && PoliciesGrid.DataContext != null)
-            //            ((PoliciesViewModel)PoliciesGrid.DataContext).refresh(db.PolicySet);
-            //    }
 
-            //    else if (Tabs.SelectedIndex == 6)
-            //    {
-            //        numberOfClients.Text = db.ClientSet.Count().ToString();
-            //        numberOfPolicies.Text = db.PolicySet.Count().ToString();
-            //        numberOfHouses.Text = db.HouseSet.Count().ToString();
-            //        numberOfCars.Text = db.CarSet.Count().ToString();
-            //        numberOfEmployees.Text = db.EmployeeSet.Count().ToString();
-            //    }
+            //if (Tabs.SelectedIndex == 0)
+            //{
+            //    if (ClientsGrid != null && ClientsGrid.DataContext != null)
+            //        ((ClientsViewModel)ClientsGrid.DataContext).refresh(context.ClientSet.ToList);
             //}
+            //else if (Tabs.SelectedIndex == 1)
+            //{
+            //    if (PoliciesGrid != null && PoliciesGrid.DataContext != null)
+            //        ((PoliciesViewModel)PoliciesGrid.DataContext).refresh(context.PolicySet);
+            //}
+
+            if (Tabs.SelectedIndex == 6)
+            {
+                numberOfClients.Text = context.ClientSet.Count().ToString();
+                numberOfPolicies.Text = context.PolicySet.Count().ToString();
+                numberOfHouses.Text = context.HouseSet.Count().ToString();
+                numberOfCars.Text = context.CarSet.Count().ToString();
+                numberOfEmployees.Text = context.EmployeeSet.Count().ToString();
+            }
+            
         }
 
         private void ObjectTypeChanged(object sender, SelectionChangedEventArgs e)

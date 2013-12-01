@@ -8,18 +8,19 @@ using Insurance_company.Helpers;
 using Insurance_company.Views;
 using System.Windows;
 using System.Collections.ObjectModel;
+using Insurance_company.ServiceReference;
 
 namespace Insurance_company.ViewModels
 {
     class EditPolicyViewModel : BaseViewModel
     {
-
+        InsuranceCompanyEntities context = new InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
         private string ObjectType;
         private const string CAR = "Car";
         private const string HOUSE = "House";
 
-        private ServiceReference.PolicySet _policy;
-        public ServiceReference.PolicySet Policy
+        private PolicySet _policy;
+        public PolicySet Policy
         {
             get { return _policy; }
             set
@@ -32,8 +33,8 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private ServiceReference.HouseSet _house;
-        public ServiceReference.HouseSet House
+        private HouseSet _house;
+        public HouseSet House
         {
             get { return _house; }
             set
@@ -46,8 +47,8 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private ServiceReference.AdressSet _address;
-        public ServiceReference.AdressSet Address
+        private AdressSet _address;
+        public AdressSet Address
         {
             get { return _address; }
             set
@@ -60,8 +61,8 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private ServiceReference.CarSet _car;
-        public ServiceReference.CarSet Car
+        private CarSet _car;
+        public CarSet Car
         {
             get { return _car; }
             set
@@ -74,8 +75,8 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private ObservableCollection<ServiceReference.ClientSet> _clients;
-        public ObservableCollection<ServiceReference.ClientSet> Clients
+        private ObservableCollection<ClientSet> _clients;
+        public ObservableCollection<ClientSet> Clients
         {
             get { return _clients; }
             set
@@ -95,39 +96,38 @@ namespace Insurance_company.ViewModels
 
         }
 
-        public EditPolicyViewModel(ServiceReference.PolicySet policy)
+        public EditPolicyViewModel(PolicySet policy)
         {
             _policy = policy;
             var LoadPolicyTask = Task.Factory.StartNew(() =>
             {
-                //using (var db = new InsuranceCompanyEntities())
-                //{
+                
 
-                //    Clients = new ObservableCollection<ClientSet>(db.ClientSet);
-                //    ObjectType = _policy.ObjectType;
-                //    if (_policy.ObjectType.Equals(CAR)) // Object is a car
-                //    {
-                //        var car = db.CarSet.Where(c => c.Policy_PolicyId == policy.PolicyId).FirstOrDefault(); // Looking for a car in the database
-                //        if (car == null)
-                //            MessageBox.Show("No car...");
-                //        else
-                //        {
-                //            _car = car;
-                //        }
-                //    }
-                //    else if (_policy.ObjectType.Equals(HOUSE)) // Object is a house
-                //    {
-                //        var house = db.HouseSet.Where(h => h.Policy_PolicyId == policy.PolicyId).FirstOrDefault(); // Looking for a house
-                //        var address = db.AdressSet.Where(a => a.AdressId == house.AdressSet.AdressId).FirstOrDefault(); // Getting house's address
-                //        if (house == null || address == null)
-                //            MessageBox.Show("No house...");
-                //        else
-                //        {
-                //            _house = house;
-                //            _address = address;
-                //        }
-                //    }
-                //}
+                    Clients = new ObservableCollection<ClientSet>(context.ClientSet);
+                    ObjectType = _policy.ObjectType;
+                    if (_policy.ObjectType.Equals(CAR)) // Object is a car
+                    {
+                        var car = context.CarSet.Where(c => c.Policy_PolicyId == policy.PolicyId).FirstOrDefault(); // Looking for a car in the database
+                        if (car == null)
+                            MessageBox.Show("No car...");
+                        else
+                        {
+                            _car = car;
+                        }
+                    }
+                    else if (_policy.ObjectType.Equals(HOUSE)) // Object is a house
+                    {
+                        var house = context.HouseSet.Where(h => h.Policy_PolicyId == policy.PolicyId).FirstOrDefault(); // Looking for a house
+                        var address = context.AdressSet.Where(a => a.AdressId == house.AdressSet.AdressId).FirstOrDefault(); // Getting house's address
+                        if (house == null || address == null)
+                            MessageBox.Show("No house...");
+                        else
+                        {
+                            _house = house;
+                            _address = address;
+                        }
+                    }
+                
             });
             LoadPolicyTask.Wait();
         }
@@ -137,8 +137,7 @@ namespace Insurance_company.ViewModels
 
             Task.Factory.StartNew(() =>
             {
-                //using (var db = new InsuranceCompanyEntities())
-                //{
+                
                 //    var policy = db.PolicySet.Find(Policy.PolicyId);
                 //    db.Entry(policy).CurrentValues.SetValues(Policy);
 
@@ -161,7 +160,7 @@ namespace Insurance_company.ViewModels
                 //    }
 
                 //    db.SaveChanges(); // Saving changes to the database
-                //}
+                
             }).ContinueWith(t => {
                 MessageBox.Show("Saved!");
             }, TaskContinuationOptions.OnlyOnRanToCompletion);

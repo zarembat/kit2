@@ -9,14 +9,15 @@ using System.Windows;
 using System.Data.Entity.Validation;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+using Insurance_company.ServiceReference;
 
 namespace Insurance_company.ViewModels
 {
     class AddClientViewModel : BaseViewModel
     {
-
-        private ServiceReference.ClientSet _client;
-        public ServiceReference.ClientSet Client
+        InsuranceCompanyEntities context = new InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
+        private ClientSet _client;
+        public ClientSet Client
         {
             get { return _client; }
             set
@@ -29,8 +30,8 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private ServiceReference.AdressSet _address;
-        public ServiceReference.AdressSet Address
+        private AdressSet _address;
+        public AdressSet Address
         {
             get { return _address; }
             set
@@ -51,8 +52,8 @@ namespace Insurance_company.ViewModels
 
         private void setEntities()
         {
-            _client = new ServiceReference.ClientSet();
-            _address = new ServiceReference.AdressSet();
+            _client = new ClientSet();
+            _address = new AdressSet();
         }
 
         private async Task saveClient()
@@ -74,6 +75,23 @@ namespace Insurance_company.ViewModels
             //        MessageBox.Show("Adding a new client caused an error: " + e.Message);
             //    }
             //}
+
+            
+            try // Adding new client
+            {
+                Client.AdressSet = Address;
+                context.AddObject("ClientSet", Client);
+                //await context.BeginSaveChanges(null, null); // Saving changes to the database
+            }
+            catch (DbEntityValidationException e)
+            {
+                MessageBox.Show("Adding a new client caused an error: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Adding a new client caused an error: " + e.Message);
+            }
+            
         }
 
         private void OnCustomerSave(object parameter)
@@ -82,8 +100,8 @@ namespace Insurance_company.ViewModels
             {
                 MessageBox.Show("Client added successfully!");
                 // Clearing the form:
-                Client = new ServiceReference.ClientSet();
-                Address = new ServiceReference.AdressSet();
+                Client = new ClientSet();
+                Address = new AdressSet();
             }, TaskContinuationOptions.OnlyOnRanToCompletion);
         }
     }

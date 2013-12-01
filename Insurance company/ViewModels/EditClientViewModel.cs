@@ -8,6 +8,7 @@ using Insurance_company.Helpers;
 using Insurance_company.Views;
 using System.Windows;
 using System.Data.Entity.Validation;
+using Insurance_company.ServiceReference;
 
 
 namespace Insurance_company.ViewModels
@@ -15,9 +16,9 @@ namespace Insurance_company.ViewModels
     class EditClientViewModel : BaseViewModel
     {
 
-        // private InsuranceCompanyEntities db = new InsuranceCompanyEntities();
-        private ServiceReference.ClientSet _client;
-        public ServiceReference.ClientSet Client
+        InsuranceCompanyEntities context = new InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
+        private ClientSet _client;
+        public ClientSet Client
         {
             get { return _client; }
             set
@@ -30,8 +31,8 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private ServiceReference.AdressSet _address;
-        public ServiceReference.AdressSet Address
+        private AdressSet _address;
+        public AdressSet Address
         {
             get { return _address; }
             set
@@ -50,38 +51,44 @@ namespace Insurance_company.ViewModels
         {
         }
 
-        public EditClientViewModel(ServiceReference.ClientSet client) // This is called from ClientsViewModel when an item is clicked twice
+        public EditClientViewModel(ClientSet client) // This is called from ClientsViewModel when an item is clicked twice
         {
             _client = client;
-            //using (var db = new InsuranceCompanyEntities())
-            //{
-            //    var address = db.AdressSet.Where(a => a.AdressId == client.AdressAdressId).FirstOrDefault(); // Looking for an Address
-            //    if (address != null)
-            //        _address = address;
-            //    else
-            //        MessageBox.Show("The address was not found for this client (ID: " + client.AdressAdressId + "!");
-            //}
+            var address = context.AdressSet.Where(a => a.AdressId == client.AdressAdressId).FirstOrDefault(); // Looking for an Address
+            if (address != null)
+                _address = address;
+            else
+                MessageBox.Show("The address was not found for this client (ID: " + client.AdressAdressId + "!");
+            
         }
 
         private void OnCustomerSave(object parameter)
         {
             Task.Factory.StartNew(() =>
             {
-                //using (var db = new InsuranceCompanyEntities())
-                //{
-                //    try
-                //    {
-                //        var client = db.ClientSet.Find(Client.ClientId); // Looking for an old entry in the database
-                //        var address = db.AdressSet.Find(Address.AdressId);
-                //        db.Entry(client).CurrentValues.SetValues(Client); // Updating values
-                //        db.Entry(address).CurrentValues.SetValues(Address);
-                //        db.SaveChanges(); // Saving changes
-                //    }
-                //    catch (DbEntityValidationException e)
-                //    {
-                //        MessageBox.Show(e.Message);
-                //    }
-                //}
+
+                try
+                {
+                    //var client = context.ClientSet.Find(Client.ClientId); // Looking for an old entry in the database
+                    //var address = db.AdressSet.Find(Address.AdressId);
+                    //db.Entry(client).CurrentValues.SetValues(Client); // Updating values
+                    //db.Entry(address).CurrentValues.SetValues(Address);
+                    //db.SaveChanges(); // Saving changes
+
+                    var clientToChange = (from client in context.ClientSet
+                                            where client.ClientId == Client.ClientId
+                                            select client).Single();
+                    var addressToChange = (from address in context.AdressSet
+                                          where address.AdressId == Address.AdressId
+                                          select address).Single();
+                    
+
+                }
+                catch (DbEntityValidationException e)
+                {
+                    MessageBox.Show(e.Message);
+                }
+
             }).ContinueWith(t =>
             {
                 MessageBox.Show("Client edited successfully!");
