@@ -64,7 +64,7 @@ namespace Insurance_company.ViewModels
                 //{
                 //    _clients = new ObservableCollection <ClientSet>(db.ClientSet);
                 //}
-                _clients = new ObservableCollection <ClientSet>(context.ClientSet.AsQueryable());
+                _clients = new ObservableCollection <ClientSet>(context.ClientSet);
 
             });
             GetClientsTask.Wait();

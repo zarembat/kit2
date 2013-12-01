@@ -43,29 +43,13 @@ namespace Insurance_company.ViewModels
         private void OnLogin(object Parameter) {
 
             Login LoginWindow = Parameter as Login; // We pass window object to get the password
-           // EmployeeSet Employee = null;
+            EmployeeSet Employee = null;
             InsuranceCompanyEntities context = new InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
-            
-            //System.Data.Services.Client.DataServiceQuery<ServiceReference.EmployeeSet> employeeQuery = dataServiceClient.EmployeeSet.Where(e => e.Login == UserName && e.Password == LoginWindow.PasswordInput.Password).FirstOrDefault();
-            //CollectionViewSource ordersViewSource;
-            //IQueryable<EmployeeSet> employee = context.EmployeeSet;
-            var Employee = context.EmployeeSet.AsQueryable();
 
             var LoginTask = Task.Factory.StartNew(() =>
             {
 
-              Employee = Employee.Where(e => e.Login == UserName && e.Password == LoginWindow.PasswordInput.Password); // Looking for an employee in the database
-
-               /* var Emp = from emp in dataServiceClient.EmployeeSet
-                           where emp.Login == UserName
-                           select emp;
-                if (Emp == null)
-                    MessageBox.Show("Invalid username or password!");
-                else
-                {
-                    new EmployeePanel().Show(); // We open Employee panel
-                    LoginWindow.Close(); // We close login window
-                }*/
+              Employee = context.EmployeeSet.Where(e => e.Login == UserName && e.Password == LoginWindow.PasswordInput.Password).FirstOrDefault(); // Looking for an employee in the database
 
             });
             LoginTask.Wait();
@@ -74,6 +58,8 @@ namespace Insurance_company.ViewModels
                 new EmployeePanel().Show(); // We open Employee panel
                 LoginWindow.Close(); // We close login window
             }
+            else
+                MessageBox.Show("Invalid login or password");
         }
 
     }
