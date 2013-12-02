@@ -14,9 +14,9 @@ namespace Insurance_company.ViewModels
 {
     class PoliciesViewModel : BaseViewModel
     {
-        private ObservableCollection<ServiceReference.PolicySet> _policies;
+        private ObservableCollection<PolicySet> _policies;
         InsuranceCompanyEntities context = new InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
-        public ObservableCollection<ServiceReference.PolicySet> Policies
+        public ObservableCollection<PolicySet> Policies
         {
             get { return _policies; }
             set
@@ -30,7 +30,7 @@ namespace Insurance_company.ViewModels
 
         }
 
-        public void refresh(System.Data.Entity.DbSet<ServiceReference.PolicySet> policies) // Refreshing the list of policies in the DataGrid
+        public void refresh(IQueryable<PolicySet> policies) // Refreshing the list of policies in the DataGrid
         {
             //Policies = new ObservableCollection<PolicySet>(policies);
             ObservableCollection<PolicySet> policiess = new ObservableCollection<PolicySet>(policies);
@@ -62,7 +62,7 @@ namespace Insurance_company.ViewModels
             GetPoliciesTask.Wait();
         }
 
-        public PoliciesViewModel(ObservableCollection<ServiceReference.PolicySet> policies)
+        public PoliciesViewModel(ObservableCollection<PolicySet> policies)
         {
             _policies = policies;
         }

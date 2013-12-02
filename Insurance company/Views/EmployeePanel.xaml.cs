@@ -38,16 +38,16 @@ namespace Insurance_company.Views
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
-            //if (Tabs.SelectedIndex == 0)
-            //{
-            //    if (ClientsGrid != null && ClientsGrid.DataContext != null)
-            //        ((ClientsViewModel)ClientsGrid.DataContext).refresh(context.ClientSet.ToList);
-            //}
-            //else if (Tabs.SelectedIndex == 1)
-            //{
-            //    if (PoliciesGrid != null && PoliciesGrid.DataContext != null)
-            //        ((PoliciesViewModel)PoliciesGrid.DataContext).refresh(context.PolicySet);
-            //}
+            if (Tabs.SelectedIndex == 0)
+            {
+                if (ClientsGrid != null && ClientsGrid.DataContext != null)
+                    ((ClientsViewModel)ClientsGrid.DataContext).refresh(context.ClientSet);
+            }
+            else if (Tabs.SelectedIndex == 1)
+            {
+                if (PoliciesGrid != null && PoliciesGrid.DataContext != null)
+                    ((PoliciesViewModel)PoliciesGrid.DataContext).refresh(context.PolicySet);
+            }
 
             if (Tabs.SelectedIndex == 6)
             {

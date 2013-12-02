@@ -46,7 +46,7 @@ namespace Insurance_company.ViewModels
             EditClientWindow.ShowDialog();
         }
 
-        public void refresh(System.Data.Entity.DbSet<ClientSet> clients) // Refreshing the list of clients in the DataGrid
+        public void refresh(IQueryable<ClientSet> clients) // Refreshing the list of clients in the DataGrid
         {
             // Clients = new ObservableCollection <ClientSet>(clients);
             ObservableCollection <ClientSet> clientss = new ObservableCollection <ClientSet>(clients);
