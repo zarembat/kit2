@@ -62,8 +62,8 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private ServiceReference.AdressSet _address;
-        public ServiceReference.AdressSet Address
+        private AdressSet _address;
+        public AdressSet Address
         {
             get { return _address; }
             set
@@ -76,105 +76,12 @@ namespace Insurance_company.ViewModels
             }
         }
 
-        private string CreateClientSearchQuery(int addressId)
-        {
-
-            string esqlQuery = null;
-
-            if (addressId > 0 || Client.ClientId > 0 || (Client.Name != null && !Client.Name.Equals("")) || (Client.PESEL != null && !Client.PESEL.Equals("")) || (Client.Surname != null && !Client.Surname.Equals("")))
-            {
-                esqlQuery += @"SELECT VALUE Client FROM InsuranceCompanyEntities.ClientSet AS Client WHERE ";
-                if (addressId > 0)
-                {
-                    Client.AdressAdressId = addressId;
-                    EntityParameter param = new EntityParameter();
-                    param.ParameterName = "AdressAdressId";
-                    param.Value = addressId;
-                    ClientParameters.Add(param);
-                    esqlQuery += "Client.AdressAdressId = @AdressAdressId AND ";
-                }
-            }
-            if (Client.Name != null && !Client.Name.Equals(""))
-            {
-                EntityParameter param = new EntityParameter();
-                param.ParameterName = "Name";
-                param.Value = Client.Name;
-                ClientParameters.Add(param);
-                esqlQuery += "Client.Name = @Name AND ";
-            }
-            if (Client.PESEL != null && !Client.PESEL.Equals(""))
-            {
-                EntityParameter param = new EntityParameter();
-                param.ParameterName = "PESEL";
-                param.Value = Client.PESEL;
-                ClientParameters.Add(param);
-                esqlQuery += "Client.PESEL = @PESEL AND ";
-            }
-            if (Client.Surname != null && !Client.Surname.Equals(""))
-            {
-                EntityParameter param = new EntityParameter();
-                param.ParameterName = "Surname";
-                param.Value = Client.Surname;
-                ClientParameters.Add(param);
-                esqlQuery += "Client.Surname = @Surname AND ";
-            }
-
-            if (esqlQuery != null)
-                esqlQuery = esqlQuery.Remove(esqlQuery.Length - 5);
-            return esqlQuery;
-
-        }
-
-        private string CreateAddressSearchQuery()
-        {
-            string esqlQuery = null;
-
-            if ((Address.Town != null && !Address.Town.Equals("")) || (Address.HouseNumber != null && !Address.HouseNumber.Equals("")) || (Address.Street != null && !Address.Street.Equals("")) || (Address.ZipCode != null && !Address.ZipCode.Equals("")))
-                esqlQuery += @"SELECT VALUE Address FROM InsuranceCompanyEntities.AdressSet AS Address WHERE ";
-
-            if (Address.Town != null && !Address.Town.Equals(""))
-            {
-                EntityParameter param = new EntityParameter();
-                param.ParameterName = "Town";
-                param.Value = Address.Town;
-                AddressParameters.Add(param);
-                esqlQuery += "Address.Town = @Town AND ";
-            }
-            if (Address.Street != null && !Address.Street.Equals(""))
-            {
-                EntityParameter param = new EntityParameter();
-                param.ParameterName = "Street";
-                param.Value = Address.Street;
-                AddressParameters.Add(param);
-                esqlQuery += "Address.Street = @Street AND ";
-            }
-            if (Address.HouseNumber != null && !Address.HouseNumber.Equals(""))
-            {
-                EntityParameter param = new EntityParameter();
-                param.ParameterName = "HouseNumber";
-                param.Value = Address.HouseNumber;
-                AddressParameters.Add(param);
-                esqlQuery += "Address.HouseNumber = @HouseNumber AND ";
-            }
-            if (Address.ZipCode != null && !Address.ZipCode.Equals(""))
-            {
-                EntityParameter param = new EntityParameter();
-                param.ParameterName = "ZipCode";
-                param.Value = Address.ZipCode;
-                AddressParameters.Add(param);
-                esqlQuery += "Address.ZipCode = @ZipCode AND ";
-            }
-
-            if (esqlQuery != null)
-                esqlQuery = esqlQuery.Remove(esqlQuery.Length - 5);
-            return esqlQuery;
-        }
 
         public ICommand SearchClientCommand { get { return new DelegateCommand(OnCustomerSearch); } }
 
         public SearchClientViewModel() {
-            _client = new ServiceReference.ClientSet();
-            _address = new ServiceReference.AdressSet();
+            _client = new ClientSet();
+            _address = new AdressSet();
         }
 
         public Expression<Func<ClientSet, bool>> GetWhereLambdaClient(ClientSet client, int addressId1)
@@ -192,33 +99,45 @@ namespace Insurance_company.ViewModels
                 System.Linq.Expressions.Expression val = System.Linq.Expressions.Expression.Constant(addressId1);
                 cond = System.Linq.Expressions.Expression.Equal(prop, val);
             }
-            
+
             if (client.Name != null)
             {
-                nameExpr = GetEqualsExpr(param, "name", client.Name);
-                if (cond == null)
-                    cond = nameExpr;
-                else
-                    cond = System.Linq.Expressions.Expression.And(cond, nameExpr);
+                if (!client.Name.Equals(""))
+                {
+                    nameExpr = GetEqualsExpr(param, "name", client.Name);
+                    if (cond == null)
+                        cond = nameExpr;
+                    else
+                        cond = System.Linq.Expressions.Expression.And(cond, nameExpr);
+                }
+            }
+            {
+                
             }
 
             if (client.Surname != null)
             {
-                surnameExpr = GetEqualsExpr(param, "surname", client.Surname);
+                if (!client.Surname.Equals(""))
+                {
+                    surnameExpr = GetEqualsExpr(param, "surname", client.Surname);
 
-                if (cond == null)
-                    cond = surnameExpr;
-                else
-                    cond = System.Linq.Expressions.Expression.And(cond, surnameExpr);
+                    if (cond == null)
+                        cond = surnameExpr;
+                    else
+                        cond = System.Linq.Expressions.Expression.And(cond, surnameExpr);
+                }
             }
 
             if (client.PESEL != null)
             {
-                peselExpr = GetEqualsExpr(param, "pesel", client.PESEL);
-                if (cond == null)
-                    cond = peselExpr;
-                else
-                    cond = System.Linq.Expressions.Expression.And(cond, peselExpr);
+                if (!client.PESEL.Equals(""))
+                {
+                    peselExpr = GetEqualsExpr(param, "pesel", client.PESEL);
+                    if (cond == null)
+                        cond = peselExpr;
+                    else
+                        cond = System.Linq.Expressions.Expression.And(cond, peselExpr);
+                }
             }
 
             if (cond != null)
@@ -239,36 +158,49 @@ namespace Insurance_company.ViewModels
 
             if (address.Town != null)
             {
-                townExpr = GetEqualsExpr(param, "town", address.Town);
-                cond = townExpr;
+                if (!address.Town.Equals("")) {
+                    townExpr = GetEqualsExpr(param, "town", address.Town);
+                    cond = townExpr;
+                }
+                
             }
 
             if (address.Street != null)
             {
-                streetExpr = GetEqualsExpr(param, "street", address.Street);
+                if (!address.Street.Equals(""))
+                {
+                    streetExpr = GetEqualsExpr(param, "street", address.Street);
 
-                if (cond == null)
-                    cond = streetExpr;
-                else
-                    cond = System.Linq.Expressions.Expression.And(cond, streetExpr);
+                    if (cond == null)
+                        cond = streetExpr;
+                    else
+                        cond = System.Linq.Expressions.Expression.And(cond, streetExpr);
+                }
             }
 
-            if (address.HouseNumber != null)
+           if (address.HouseNumber != null)
             {
-                houseNumberExpr = GetEqualsExpr(param, "houseNumber", address.HouseNumber);
-                if (cond == null)
-                    cond = houseNumberExpr;
-                else
-                    cond = System.Linq.Expressions.Expression.And(cond, houseNumberExpr);
+                if (!address.HouseNumber.Equals(""))
+                {
+
+                    houseNumberExpr = GetEqualsExpr(param, "houseNumber", address.HouseNumber);
+                    if (cond == null)
+                        cond = houseNumberExpr;
+                    else
+                        cond = System.Linq.Expressions.Expression.And(cond, houseNumberExpr);
+                }
             }
 
             if (address.ZipCode != null)
             {
-                zipCodeExpr = GetEqualsExpr(param, "zipCode", address.ZipCode);
-                if (cond == null)
-                    cond = zipCodeExpr;
-                else
-                    cond = System.Linq.Expressions.Expression.And(cond,zipCodeExpr);
+                if (!address.ZipCode.Equals(""))
+                {
+                    zipCodeExpr = GetEqualsExpr(param, "zipCode", address.ZipCode);
+                    if (cond == null)
+                        cond = zipCodeExpr;
+                    else
+                        cond = System.Linq.Expressions.Expression.And(cond, zipCodeExpr);
+                }
             }
 
             if (cond != null)
@@ -292,7 +224,6 @@ namespace Insurance_company.ViewModels
             Expression<Func<ClientSet, bool>> myLambda = null;
             Expression<Func<AdressSet, bool>> myLambdaAddress = null;
             bool label = false;
-            
 
             myLambdaAddress = GetWhereLambdaAddress(Address);
             if (myLambdaAddress != null)
@@ -302,7 +233,6 @@ namespace Insurance_company.ViewModels
                     addresses = null;
             }
                 
-
             if (addresses == null && myLambdaAddress != null)
                 MessageBox.Show("No clients matching these address criteria were found!");
 
@@ -316,9 +246,9 @@ namespace Insurance_company.ViewModels
                     if (myLambda != null)
                     {
                         clients = context.ClientSet.Where(myLambda);
+                        label = true;
                         foreach (ClientSet client in clients)
                         {
-                            label = true;
                             _clients.Add(client);
                         }
                     }
