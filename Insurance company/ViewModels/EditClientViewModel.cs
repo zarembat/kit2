@@ -69,20 +69,10 @@ namespace Insurance_company.ViewModels
 
                 try
                 {
-                    //var client = context.ClientSet.Find(Client.ClientId); // Looking for an old entry in the database
-                    //var address = db.AdressSet.Find(Address.AdressId);
-                    //db.Entry(client).CurrentValues.SetValues(Client); // Updating values
-                    //db.Entry(address).CurrentValues.SetValues(Address);
-                    //db.SaveChanges(); // Saving changes
-
-                    var clientToChange = (from client in context.ClientSet
-                                            where client.ClientId == Client.ClientId
-                                            select client).Single();
-                    var addressToChange = (from address in context.AdressSet
-                                          where address.AdressId == Address.AdressId
-                                          select address).Single();
-                    
-
+                    context.AttachTo("ClientSet", Client);
+                    context.UpdateObject(Client);
+                    context.UpdateObject(Address);
+                    context.SaveChanges(); 
                 }
                 catch (DbEntityValidationException e)
                 {

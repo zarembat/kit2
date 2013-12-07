@@ -48,7 +48,6 @@ namespace Insurance_company.ViewModels
 
         public void refresh(IQueryable<ClientSet> clients) // Refreshing the list of clients in the DataGrid
         {
-            // Clients = new ObservableCollection <ClientSet>(clients);
             ObservableCollection <ClientSet> clientss = new ObservableCollection <ClientSet>(clients);
             for (int i = Clients.Count; i < clients.Count(); i++)
             {
@@ -60,10 +59,6 @@ namespace Insurance_company.ViewModels
         {
             var GetClientsTask = Task.Factory.StartNew(() =>
             {
-                //using (var db = new InsuranceCompanyEntities())
-                //{
-                //    _clients = new ObservableCollection <ClientSet>(db.ClientSet);
-                //}
                 _clients = new ObservableCollection <ClientSet>(context.ClientSet);
 
             });

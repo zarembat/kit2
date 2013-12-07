@@ -104,10 +104,9 @@ namespace Insurance_company.ViewModels
 
             Task.Factory.StartNew(() =>
             {
-                //using (var db = new ServiceReference.InsuranceCompanyEntities())
-                //{;
-                //Clients = new ObservableCollection<ServiceReference.ClientSet>(db.ClientSet);
-                //}
+                
+                Clients = new ObservableCollection<ServiceReference.ClientSet>(context.ClientSet);
+                
             });
 
         }

@@ -19,7 +19,8 @@ using System.Data.SqlClient;
 using System.Data.EntityClient;
 using System.Data.Metadata.Edm;
 using System.Reflection;
-
+using System.Linq.Expressions;
+using Insurance_company.ServiceReference;
 using System.Data.Services.Client;
 using System.Data.Objects;
 
@@ -27,13 +28,13 @@ namespace Insurance_company.ViewModels
 {
     class SearchClientViewModel : BaseViewModel
     {
-
+        InsuranceCompanyEntities context = new InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
         List<EntityParameter> ClientParameters = new List<EntityParameter>();
         List<EntityParameter> AddressParameters = new List<EntityParameter>();
 
-        private ObservableCollection <ServiceReference.ClientSet> _clients = new ObservableCollection <ServiceReference.ClientSet>();
+        private ObservableCollection <ClientSet> _clients = new ObservableCollection <ClientSet>();
 
-        public ObservableCollection <ServiceReference.ClientSet> Clients
+        public ObservableCollection <ClientSet> Clients
         {
             get { return _clients; }
             set
@@ -47,8 +48,8 @@ namespace Insurance_company.ViewModels
 
         }
 
-        private ServiceReference.ClientSet _client;
-        public ServiceReference.ClientSet Client
+        private ClientSet _client;
+        public ClientSet Client
         {
             get { return _client; }
             set
@@ -176,11 +177,157 @@ namespace Insurance_company.ViewModels
             _address = new ServiceReference.AdressSet();
         }
 
+        public Expression<Func<ClientSet, bool>> GetWhereLambdaClient(ClientSet client, int addressId1)
+        {
+            ParameterExpression param = System.Linq.Expressions.Expression.Parameter(typeof(ClientSet), "c");
+
+            System.Linq.Expressions.Expression surnameExpr;
+            System.Linq.Expressions.Expression nameExpr;
+            System.Linq.Expressions.Expression peselExpr;
+            System.Linq.Expressions.Expression cond = null;
+
+            if (addressId1 != -1)
+                 cond = GetEqualsExpr(param, "AdressAdressId", addressId1.ToString());
+
+            if (client.Name != null)
+            {
+                nameExpr = GetEqualsExpr(param, "name", client.Name);
+                if (cond == null)
+                    cond = nameExpr;
+                else
+                    cond = System.Linq.Expressions.Expression.And(cond, nameExpr);
+            }
+
+            if (client.Surname != null)
+            {
+                surnameExpr = GetEqualsExpr(param, "surname", client.Surname);
+
+                if (cond == null)
+                    cond = surnameExpr;
+                else
+                    cond = System.Linq.Expressions.Expression.And(cond, surnameExpr);
+            }
+
+            if (client.PESEL != null)
+            {
+                peselExpr = GetEqualsExpr(param, "pesel", client.PESEL);
+                if (cond == null)
+                    cond = peselExpr;
+                else
+                    cond = System.Linq.Expressions.Expression.And(cond, peselExpr);
+            }
+
+            if (cond != null)
+                return System.Linq.Expressions.Expression.Lambda<Func<ClientSet, bool>>(cond, param);
+
+            return null;
+        }
+
+        public Expression<Func<AdressSet, bool>> GetWhereLambdaAddress(AdressSet address)
+        {
+            ParameterExpression param = System.Linq.Expressions.Expression.Parameter(typeof(AdressSet), "a");
+
+            System.Linq.Expressions.Expression townExpr;
+            System.Linq.Expressions.Expression streetExpr;
+            System.Linq.Expressions.Expression houseNumberExpr;
+            System.Linq.Expressions.Expression zipCodeExpr;
+            System.Linq.Expressions.Expression cond = null;
+
+            if (address.Town != null)
+            {
+                townExpr = GetEqualsExpr(param, "town", address.Town);
+                cond = townExpr;
+            }
+
+            if (address.Street != null)
+            {
+                streetExpr = GetEqualsExpr(param, "street", address.Street);
+
+                if (cond == null)
+                    cond = streetExpr;
+                else
+                    cond = System.Linq.Expressions.Expression.And(cond, streetExpr);
+            }
+
+            if (address.HouseNumber != null)
+            {
+                houseNumberExpr = GetEqualsExpr(param, "houseNumber", address.HouseNumber);
+                if (cond == null)
+                    cond = houseNumberExpr;
+                else
+                    cond = System.Linq.Expressions.Expression.And(cond, houseNumberExpr);
+            }
+
+            if (address.ZipCode != null)
+            {
+                zipCodeExpr = GetEqualsExpr(param, "zipCode", address.ZipCode);
+                if (cond == null)
+                    cond = zipCodeExpr;
+                else
+                    cond = System.Linq.Expressions.Expression.And(cond,zipCodeExpr);
+            }
+
+            if (cond != null)
+                return System.Linq.Expressions.Expression.Lambda<Func<AdressSet, bool>>(cond, param);
+
+            return null;
+        }
+
+        private System.Linq.Expressions.Expression GetEqualsExpr(ParameterExpression param,
+                                         string property,
+                                         string value)
+        {
+            System.Linq.Expressions.Expression prop = System.Linq.Expressions.Expression.Property(param, property);
+            System.Linq.Expressions.Expression val = System.Linq.Expressions.Expression.Constant(value);
+            return System.Linq.Expressions.Expression.Equal(prop, val);
+        }
         private void OnCustomerSearch(object parameter)
         {
 
+            Expression<Func<AdressSet, bool>> myLambdaAddress = GetWhereLambdaAddress(Address);
+            AdressSet address = null;
+            if (myLambdaAddress != null)
+                address = context.AdressSet.Where(myLambdaAddress).FirstOrDefault();
+
+            if (address == null && myLambdaAddress != null)
+                MessageBox.Show("No clients matching these address criteria were found!");
+
+            else {
+ 
+                Expression<Func<ClientSet, bool>> myLambda;
+                if (address == null)
+                    myLambda = GetWhereLambdaClient(Client, -1);
+                else
+                    myLambda = GetWhereLambdaClient(Client, address.AdressId);
+
+                IEnumerable<ClientSet> clients = null;
+
+                if (myLambda == null)
+                    MessageBox.Show("All fields are empty");
+
+                else{
+
+                    clients = context.ClientSet.Where(myLambda);
+                    _clients = new ObservableCollection<ClientSet>(clients);
+                    if (clients == null)
+                        MessageBox.Show("No clients matching these criteria were found!");
+
+                    else
+                    {
+                        ClientsWindow cw = new ClientsWindow();
+                        cw.DataContext = new ClientsViewModel(_clients);
+                        cw.ShowDialog();
+                        _clients = new ObservableCollection<ClientSet>(); // Zerujemy kolekcję w razie kolejnego wyszukiwania
+                    }
+                }
+                    
+            }
+
+            
+
             string addressQuery = CreateAddressSearchQuery();
             int addressId = -1;
+            
             Task.Factory.StartNew(() =>
             {
                 using (EntityConnection conn = new EntityConnection("name=InsuranceCompanyEntities"))
