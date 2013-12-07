@@ -287,9 +287,14 @@ namespace Insurance_company.ViewModels
         }
         private void OnCustomerSearch(object parameter)
         {
-
-            Expression<Func<AdressSet, bool>> myLambdaAddress = GetWhereLambdaAddress(Address);
             IEnumerable<AdressSet> addresses = null;
+            IEnumerable<ClientSet> clients = null;
+            Expression<Func<ClientSet, bool>> myLambda = null;
+            Expression<Func<AdressSet, bool>> myLambdaAddress = null;
+            bool label = false;
+            
+
+            myLambdaAddress = GetWhereLambdaAddress(Address);
             if (myLambdaAddress != null)
             {
                 addresses = context.AdressSet.Where(myLambdaAddress);
@@ -303,10 +308,6 @@ namespace Insurance_company.ViewModels
 
             else
             {
-
-                IEnumerable<ClientSet> clients = null;
-                Expression<Func<ClientSet, bool>> myLambda;
-                bool label = false;
 
                 if (addresses == null)
                 {
