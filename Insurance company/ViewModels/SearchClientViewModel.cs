@@ -186,9 +186,13 @@ namespace Insurance_company.ViewModels
             System.Linq.Expressions.Expression peselExpr;
             System.Linq.Expressions.Expression cond = null;
 
-            if (addressId1 != -1)
-                 cond = GetEqualsExpr(param, "AdressAdressId", addressId1.ToString());
+            if (addressId1 != -1) {
 
+                System.Linq.Expressions.Expression prop = System.Linq.Expressions.Expression.Property(param, "AdressAdressId");
+                System.Linq.Expressions.Expression val = System.Linq.Expressions.Expression.Constant(addressId1);
+                cond = System.Linq.Expressions.Expression.Equal(prop, val);
+            }
+            
             if (client.Name != null)
             {
                 nameExpr = GetEqualsExpr(param, "name", client.Name);
@@ -285,31 +289,68 @@ namespace Insurance_company.ViewModels
         {
 
             Expression<Func<AdressSet, bool>> myLambdaAddress = GetWhereLambdaAddress(Address);
-            AdressSet address = null;
+            IEnumerable<AdressSet> addresses = null;
             if (myLambdaAddress != null)
-                address = context.AdressSet.Where(myLambdaAddress).FirstOrDefault();
+            {
+                addresses = context.AdressSet.Where(myLambdaAddress);
+                if (addresses.Count() == 0)
+                    addresses = null;
+            }
+                
 
-            if (address == null && myLambdaAddress != null)
+            if (addresses == null && myLambdaAddress != null)
                 MessageBox.Show("No clients matching these address criteria were found!");
 
-            else {
- 
-                Expression<Func<ClientSet, bool>> myLambda;
-                if (address == null)
-                    myLambda = GetWhereLambdaClient(Client, -1);
-                else
-                    myLambda = GetWhereLambdaClient(Client, address.AdressId);
+            else
+            {
 
                 IEnumerable<ClientSet> clients = null;
+                Expression<Func<ClientSet, bool>> myLambda;
+                bool label = false;
 
-                if (myLambda == null)
+                if (addresses == null)
+                {
+                    myLambda = GetWhereLambdaClient(Client, -1);
+
+                    if (myLambda != null)
+                    {
+                        clients = context.ClientSet.Where(myLambda);
+                        foreach (ClientSet client in clients)
+                        {
+                            label = true;
+                            _clients.Add(client);
+                        }
+                    }
+                }
+                    
+                else
+                {
+                    foreach (AdressSet address in addresses)
+                    {
+                        myLambda = GetWhereLambdaClient(Client, address.AdressId);
+
+                        if (myLambda != null)
+                        {
+                            label = true;
+                            clients = context.ClientSet.Where(myLambda);
+
+                            foreach (ClientSet client in clients)
+                            {
+                                _clients.Add(client);
+                            }
+                        }
+
+                    }
+                }
+
+                if (!label)
                     MessageBox.Show("All fields are empty");
 
-                else{
+                else
+                {
 
-                    clients = context.ClientSet.Where(myLambda);
-                    _clients = new ObservableCollection<ClientSet>(clients);
-                    if (clients == null)
+
+                    if (_clients.Count() == 0)
                         MessageBox.Show("No clients matching these criteria were found!");
 
                     else
@@ -320,100 +361,9 @@ namespace Insurance_company.ViewModels
                         _clients = new ObservableCollection<ClientSet>(); // Zerujemy kolekcję w razie kolejnego wyszukiwania
                     }
                 }
-                    
+
             }
-
-            
-
-            string addressQuery = CreateAddressSearchQuery();
-            int addressId = -1;
-            
-            Task.Factory.StartNew(() =>
-            {
-                using (EntityConnection conn = new EntityConnection("name=InsuranceCompanyEntities"))
-                {
-                    conn.Open();
-
-                    if (addressQuery != null) // Co najmniej jedno pole adresowe zostało uzupełnione
-                    {
-
-                        using (EntityCommand cmd = new EntityCommand(addressQuery, conn))
-                        {
-
-                            foreach (EntityParameter param in AddressParameters)
-                            {
-                                cmd.Parameters.Add(param);
-                            }
-
-                            AddressParameters = new List<EntityParameter>();
-
-                            using (DbDataReader rdr = cmd.ExecuteReader(CommandBehavior.SequentialAccess))
-                            {
-                                while (rdr.Read())
-                                {
-                                    addressId = (int)rdr["AdressId"];
-                                    if (addressId > 0) // Znaleźliśmy adres spełniający te kryteria
-                                        GetClients(addressId, conn); // Szukamy dla niego klientów
-                                }
-                            }
-                        }
-
-                    }
-                    else // Nie uzupełniono danych adresowych, szukamy po prostu klientów
-                    {
-                        GetClients(-1, conn);
-                    }
-
-                    conn.Close();
-
-                }}).ContinueWith(t => {
-
-                if (_clients.Count > 0) // Znaleźliśmy klientów, przekazujemy dane i otwieramy okienko
-                {
-                    ClientsWindow cw = new ClientsWindow();
-                    cw.DataContext = new ClientsViewModel(_clients);
-                    cw.ShowDialog();
-                    _clients = new ObservableCollection <ServiceReference.ClientSet>(); // Zerujemy kolekcję w razie kolejnego wyszukiwania
-                }
-                else
-                    MessageBox.Show("No clients matching these criteria were found!");
-                }, TaskScheduler.FromCurrentSynchronizationContext());
-
-
         }
-
-        private void GetClients(int addressId, EntityConnection c)
-        {
-            string esqlQuery = CreateClientSearchQuery(addressId);
-            if (esqlQuery != null)
-            {
-                using (EntityCommand cmd = new EntityCommand(esqlQuery, c))
-                {
-
-                    foreach (EntityParameter param in ClientParameters)
-                    {
-                        cmd.Parameters.Add(param);
-                    }
-
-                    ClientParameters = new List<EntityParameter>();
-
-                    using (DbDataReader rdr = cmd.ExecuteReader(CommandBehavior.SequentialAccess))
-                    {
-                        while (rdr.Read())
-                        {
-                            ServiceReference.ClientSet client = new ServiceReference.ClientSet();
-                            client.ClientId = (int)rdr["ClientId"];
-                            client.Surname = rdr["Surname"].ToString();
-                            client.Name = rdr["Name"].ToString();
-                            client.PESEL = rdr["PESEL"].ToString();
-                            client.AdressAdressId = (int)rdr["AdressAdressId"];
-                            _clients.Add(client);
-                        }
-                    }
-
-                }
-            }
-
-        }
+            
     }
 }
