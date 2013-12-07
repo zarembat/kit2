@@ -119,7 +119,7 @@ namespace Insurance_company.ViewModels
                     {
                         var house = context.HouseSet.Where(h => h.Policy_PolicyId == policy.PolicyId).FirstOrDefault(); // Looking for a house
                         var address = context.AdressSet.Where(a => a.AdressId == house.AdressSet.AdressId).FirstOrDefault(); // Getting house's address
-                        if (house == null || address == null)
+                        if (address == null)//house == null || 
                             MessageBox.Show("No house...");
                         else
                         {
@@ -137,29 +137,26 @@ namespace Insurance_company.ViewModels
 
             Task.Factory.StartNew(() =>
             {
-                
-                //    var policy = db.PolicySet.Find(Policy.PolicyId);
-                //    db.Entry(policy).CurrentValues.SetValues(Policy);
 
-                //    if (ObjectType.Equals(CAR))
-                //    {
+                context.AttachTo("PolicySet", Policy);
+                context.UpdateObject(Policy);
 
-                //        var car = db.CarSet.Find(Car.ObjectId); // Getting old entry
-                //        db.Entry(car).CurrentValues.SetValues(Car); // Updating
+                if (ObjectType.Equals(CAR))
+                {
+                    context.UpdateObject(Car);
+                }
+                if (ObjectType.Equals(House))
+                {
 
-                //    }
-                //    if (ObjectType.Equals(House))
-                //    {
+                    context.AttachTo("HouseSet", House);
+                    context.UpdateObject(House);
 
-                //        var house = db.HouseSet.Find(House.ObjectId);
-                //        db.Entry(house).CurrentValues.SetValues(House);
+                    context.AttachTo("AdressSet", Address);
+                    context.UpdateObject(Address);
 
-                //        var address = db.AdressSet.Find(Address.AdressId);
-                //        db.Entry(address).CurrentValues.SetValues(Address);
+                }
 
-                //    }
-
-                //    db.SaveChanges(); // Saving changes to the database
+                context.SaveChanges(); // Saving changes to the database                 
                 
             }).ContinueWith(t => {
                 MessageBox.Show("Saved!");
