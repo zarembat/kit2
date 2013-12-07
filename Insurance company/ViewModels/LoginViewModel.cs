@@ -12,11 +12,14 @@ using Insurance_company.Helpers;
 using Insurance_company.Views;
 using System.Windows.Data;
 using Insurance_company.ServiceReference;
+using System.Data.Services.Client;
 
 namespace Insurance_company.ViewModels
 {
     public class LoginViewModel : BaseViewModel
     {
+
+        Login LoginWindow = null;
 
         private String _userName { get; set; }
         private String _userPassword { get; set; }
@@ -42,25 +45,39 @@ namespace Insurance_company.ViewModels
 
         private void OnLogin(object Parameter) {
 
-            Login LoginWindow = Parameter as Login; // We pass window object to get the password
-            EmployeeSet Employee = null;
+            LoginWindow = Parameter as Login; // We pass window object to get the password
             InsuranceCompanyEntities context = new InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
 
-            var LoginTask = Task.Factory.StartNew(() =>
-            {
+            DataServiceQuery<EmployeeSet> query = (DataServiceQuery<EmployeeSet>)(from employee in context.EmployeeSet
+                                                                                  where employee.Login == UserName && employee.Password == LoginWindow.PasswordInput.Password
+                                                                                  select employee);
 
-              Employee = context.EmployeeSet.Where(e => e.Login == UserName && e.Password == LoginWindow.PasswordInput.Password).FirstOrDefault(); // Looking for an employee in the database
-
-            });
-            LoginTask.Wait();
-            if (Employee != null)
+            try
             {
-                new EmployeePanel().Show(); // We open Employee panel
-                LoginWindow.Close(); // We close login window
+                query.BeginExecute(OnEmployeeQueryComplete, query);
+            }
+            catch (DataServiceQueryException e)
+            {
+                throw new ApplicationException(
+                    "An error occurred during query execution.", e);
+            }
+        }
+
+        private void OnEmployeeQueryComplete(IAsyncResult result)
+        {
+            DataServiceQuery<EmployeeSet> query = result.AsyncState as DataServiceQuery<EmployeeSet>;
+
+            EmployeeSet employee = query.EndExecute(result).FirstOrDefault();
+            if (employee != null)
+            {
+                Application.Current.Dispatcher.Invoke(new Action(() => {
+                    new EmployeePanel().Show(); // We open Employee panel
+                    LoginWindow.Close(); // We close login window
+                }));                
             }
             else
                 MessageBox.Show("Invalid login or password");
-        }
+        }    
 
     }
 }

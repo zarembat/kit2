@@ -9,6 +9,7 @@ using System.Windows;
 using System.Data.Entity.Validation;
 using System.Collections.ObjectModel;
 using Insurance_company.ServiceReference;
+using System.Data.Services.Client;
 
 namespace Insurance_company.ViewModels
 {
@@ -102,57 +103,75 @@ namespace Insurance_company.ViewModels
             _house = new HouseSet();
             _address = new AdressSet();
 
-            Task.Factory.StartNew(() =>
+            DataServiceQuery<ClientSet> query = (DataServiceQuery<ClientSet>)(from client in context.ClientSet select client);
+
+            try
             {
-                //using (var db = new ServiceReference.InsuranceCompanyEntities())
-                //{;
-                //Clients = new ObservableCollection<ServiceReference.ClientSet>(db.ClientSet);
-                //}
-            });
+                query.BeginExecute(OnClientsQueryComplete, query);
+            }
+            catch (DataServiceQueryException e)
+            {
+                throw new ApplicationException(
+                    "An error occurred during query execution.", e);
+            }
 
         }
 
-        private async Task savePolicy()
+        private void OnClientsQueryComplete(IAsyncResult result)
         {
-            
-                DateTime now = DateTime.Now;
-                Policy.StartDate = now; // Setting StartDate
-                Policy.EndDate = now.AddYears(Policy.Duration); // Setting EndDate
-                context.AddObject("PolicySet", Policy);
-                if (Policy.ObjectType.Equals(CAR)) // If we are adding car policy
-                {
-                    context.AddObject("CarSet", Car);
-                }
-                else if (Policy.ObjectType.Equals(HOUSE)) // If we are adding house policy
-                {
-                    context.AddObject("AdressSet",Address);
-                    House.AdressSet = Address; // Assign Address to the house
-                    context.AddObject("HouseSet", House);
-                }
-            //    try
-            //    {
-            //        await db.SaveChangesAsync();   // Save changes to the database                 
-            //    }
-            //    catch (DbEntityValidationException e)
-            //    {
-            //        MessageBox.Show("Adding a new policy caused an error: " + e.Message);
-            //    }
-            //}
+            DataServiceQuery<ClientSet> query = result.AsyncState as DataServiceQuery<ClientSet>;
+            Clients = new ObservableCollection<ClientSet>(query.EndExecute(result));
         }
 
         private void OnPolicySave(object parameter)
         {
 
-            Task.Factory.StartNew(() => savePolicy()).ContinueWith(t =>
+            DateTime now = DateTime.Now;
+            Policy.StartDate = now; // Setting StartDate
+            Policy.EndDate = now.AddYears(Policy.Duration); // Setting EndDate
+            context.AddToPolicySet(Policy);
+            if (Policy.ObjectType.Equals(CAR)) // If we are adding car policy
             {
-                MessageBox.Show("Policy added successfully!");
-                // Clear the form:
-                Policy = new PolicySet();
-                Address = new AdressSet();
-                House = new HouseSet();
-                Car = new CarSet();
-            }, TaskContinuationOptions.OnlyOnRanToCompletion);
+                Car.PolicySet = Policy;
+                context.AddToCarSet(Car);
+            }
+            else if (Policy.ObjectType.Equals(HOUSE)) // If we are adding house policy
+            {
+                context.AddToAdressSet(Address);
+                House.AdressSet = Address; // Assign Address to the house
+                context.AddToHouseSet(House);
+            }
 
+            try
+            {
+                context.BeginSaveChanges(OnSaveChangesCompleted, null);
+            }
+            catch (DataServiceClientException ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
+        }
+
+        private void OnSaveChangesCompleted(IAsyncResult result)
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                try
+                {
+                    context.EndSaveChanges(result);
+                    MessageBox.Show("Policy added successfully!");
+                    // Clear the form:
+                    Policy = new PolicySet();
+                    Address = new AdressSet();
+                    House = new HouseSet();
+                    Car = new CarSet();
+                }
+                catch (DataServiceRequestException ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            }));                
         }
     }
 }

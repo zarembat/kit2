@@ -9,6 +9,7 @@ using Insurance_company.Views;
 using System.Windows;
 using System.Collections.ObjectModel;
 using Insurance_company.ServiceReference;
+using System.Data.Services.Client;
 
 namespace Insurance_company.ViewModels
 {
@@ -53,18 +54,29 @@ namespace Insurance_company.ViewModels
 
         public PoliciesViewModel()
         {
-            var GetPoliciesTask = Task.Factory.StartNew(() =>
+
+            DataServiceQuery<PolicySet> query = (DataServiceQuery<PolicySet>)(from policy in context.PolicySet select policy);
+
+            try
             {
-                
-                _policies = new ObservableCollection<PolicySet>(context.PolicySet);
-                
-            });
-            GetPoliciesTask.Wait();
+                query.BeginExecute(OnPoliciesQueryComplete, query);
+            }
+            catch (DataServiceQueryException e)
+            {
+                throw new ApplicationException(
+                    "An error occurred during query execution.", e);
+            }
         }
 
         public PoliciesViewModel(ObservableCollection<PolicySet> policies)
         {
             _policies = policies;
+        }
+
+        private void OnPoliciesQueryComplete(IAsyncResult result)
+        {
+            DataServiceQuery<PolicySet> query = result.AsyncState as DataServiceQuery<PolicySet>;
+            Policies = new ObservableCollection<PolicySet>(query.EndExecute(result));
         }
         
     }
