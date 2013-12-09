@@ -126,29 +126,36 @@ namespace Insurance_company.ViewModels
         private void OnPolicySave(object parameter)
         {
 
-            DateTime now = DateTime.Now;
-            Policy.StartDate = now; // Setting StartDate
-            Policy.EndDate = now.AddYears(Policy.Duration); // Setting EndDate
-            context.AddToPolicySet(Policy);
-            if (Policy.ObjectType.Equals(CAR)) // If we are adding car policy
-            {
-                Car.PolicySet = Policy;
-                context.AddToCarSet(Car);
-            }
-            else if (Policy.ObjectType.Equals(HOUSE)) // If we are adding house policy
-            {
-                context.AddToAdressSet(Address);
-                House.AdressSet = Address; // Assign Address to the house
-                context.AddToHouseSet(House);
-            }
-
-            try
-            {
+            try {
+                DateTime now = DateTime.Now;
+                Policy.StartDate = now; // Setting StartDate
+                Policy.EndDate = now.AddYears(Policy.Duration); // Setting EndDate
+                context.AddToPolicySet(Policy);
+                if (Policy.ObjectType.Equals(CAR)) // If we are adding car policy
+                {
+                    context.AddRelatedObject(Policy, "CarSet", Car);
+                    Policy.CarSet.Add(Car);
+                    Car.PolicySet = Policy;
+                }
+                else if (Policy.ObjectType.Equals(HOUSE)) // If we are adding house policy
+                {
+                    context.AddToAdressSet(Address);
+                    context.AddRelatedObject(Address, "HouseSet", House);
+                    context.SetLink(House, "PolicySet", Policy);                
+                    Policy.HouseSet.Add(House);
+                    House.PolicySet = Policy;
+                    Address.HouseSet.Add(House);
+                    House.AdressSet = Address; // Assign Address to the house
+                }
                 context.BeginSaveChanges(OnSaveChangesCompleted, null);
             }
             catch (DataServiceClientException ex)
             {
                 MessageBox.Show(ex.ToString());
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
             }
 
         }

@@ -314,7 +314,7 @@
                             <Button Grid.Row="4" Width="141" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="15" FontWeight="Normal" Command="{Binding SavePolicyCommand}" Height="26" Content="Add" Grid.Column="1" Margin="1,0,0,5">
                                 <Button.Style>
                                     <Style TargetType="{x:Type Button}">
-                                        <Setter Property="IsEnabled" Value="false" />
+                                        <Setter Property="IsEnabled" Value="true" />
                                         <Style.Triggers>
                                             <MultiDataTrigger>
                                                 <MultiDataTrigger.Conditions>
