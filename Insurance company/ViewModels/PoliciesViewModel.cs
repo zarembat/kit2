@@ -16,7 +16,7 @@ namespace Insurance_company.ViewModels
     class PoliciesViewModel : BaseViewModel
     {
         private ObservableCollection<PolicySet> _policies;
-        InsuranceCompanyEntities context = new InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
+        InsuranceCompanyEntities context = new InsuranceCompanyEntities(svcUri);
         public ObservableCollection<PolicySet> Policies
         {
             get { return _policies; }
@@ -75,8 +75,15 @@ namespace Insurance_company.ViewModels
 
         private void OnPoliciesQueryComplete(IAsyncResult result)
         {
-            DataServiceQuery<PolicySet> query = result.AsyncState as DataServiceQuery<PolicySet>;
-            Policies = new ObservableCollection<PolicySet>(query.EndExecute(result));
+            try
+            {
+                DataServiceQuery<PolicySet> query = result.AsyncState as DataServiceQuery<PolicySet>;
+                Policies = new ObservableCollection<PolicySet>(query.EndExecute(result));
+            }
+            catch (DataServiceQueryException e)
+            {
+                MessageBox.Show(e.ToString());
+            }
         }
         
     }

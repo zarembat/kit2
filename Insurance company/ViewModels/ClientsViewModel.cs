@@ -71,8 +71,15 @@ namespace Insurance_company.ViewModels
 
         private void OnClientsQueryComplete(IAsyncResult result)
         {
-            DataServiceQuery<ClientSet> query = result.AsyncState as DataServiceQuery<ClientSet>;
-            Clients = new ObservableCollection<ClientSet>(query.EndExecute(result));
+            try
+            {
+                DataServiceQuery<ClientSet> query = result.AsyncState as DataServiceQuery<ClientSet>;
+                Clients = new ObservableCollection<ClientSet>(query.EndExecute(result));
+            }
+            catch (DataServiceQueryException e)
+            {
+                MessageBox.Show(e.ToString());
+            }
         }
 
         public ClientsViewModel(ObservableCollection <ClientSet> clients)
