@@ -37,7 +37,7 @@ namespace Insurance_company.Views
         }
         private void windowLoaded(object sender, RoutedEventArgs e)
         {
-            if (_employee.Role == "User")
+            if (_employee == null || _employee.Role == null || !(_employee.Role == "Admin"))
                 addUserTab.Visibility = Visibility.Collapsed;
         }
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)

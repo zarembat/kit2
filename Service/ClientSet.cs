@@ -20,6 +20,11 @@ namespace Service
         {
             this.PolicySet = new HashSet<PolicySet>();
         }
+
+        public string ToString()
+        {
+            return ClientId + ". " + Name + " " + Surname;
+        }
     
         public int ClientId { get; set; }
         public string Surname { get; set; }

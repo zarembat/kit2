@@ -123,25 +123,6 @@ namespace Insurance_company.ViewModels
             else if (ObjectType.Equals(HOUSE)) // Object is a house
             {
 
-                //DataServiceQuery query = (DataServiceQuery)(from house in context.HouseSet
-                //                                            join address in context.AdressSet
-                //                                            on house.AdressSet_AdressId equals address.AdressId
-                //                                            where house.Policy_PolicyId == _policy.PolicyId
-                //                                            select new { house, address });
-
-                //try
-                //{
-                //    query.BeginExecute(OnHouseQueryComplete, query);
-                //}
-                //catch (DataServiceQueryException e)
-                //{
-                //    throw new ApplicationException(
-                //        "An error occurred during query execution.", e);
-                //}
-
-                //Uri houseUri = new Uri(svcUri.AbsoluteUri + "/HouseSet/?Policy_PolicyId=" + _policy.PolicyId);
-                //Uri addressUri = new UriInsuranceCompanyEntities context = new InsuranceCompanyEntities(svcUri);
-
                 DataServiceQuery<HouseSet> query = (DataServiceQuery<HouseSet>)(from house in context.HouseSet.Expand("AdressSet")
                                                                                 where house.Policy_PolicyId == _policy.PolicyId
                                                                                 select house);
@@ -161,15 +142,29 @@ namespace Insurance_company.ViewModels
 
         private void OnCarQueryComplete(IAsyncResult result)
         {
-            DataServiceQuery<CarSet> query = result.AsyncState as DataServiceQuery<CarSet>;
-            Car = query.EndExecute(result).FirstOrDefault();
+            try
+            {
+                DataServiceQuery<CarSet> query = result.AsyncState as DataServiceQuery<CarSet>;
+                Car = query.EndExecute(result).FirstOrDefault();
+            }
+            catch (DataServiceQueryException e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
         private void OnHouseQueryComplete(IAsyncResult result)
         {
-            DataServiceQuery<HouseSet> query = result.AsyncState as DataServiceQuery<HouseSet>;
-            House = query.EndExecute(result).FirstOrDefault();
-            Address = House.AdressSet;
+            try
+            {
+                DataServiceQuery<HouseSet> query = result.AsyncState as DataServiceQuery<HouseSet>;
+                House = query.EndExecute(result).FirstOrDefault();
+                Address = House.AdressSet;
+            }
+            catch (DataServiceQueryException e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
         private void OnPolicySave(object parameter)

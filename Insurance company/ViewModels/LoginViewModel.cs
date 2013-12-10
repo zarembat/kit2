@@ -58,8 +58,7 @@ namespace Insurance_company.ViewModels
             }
             catch (DataServiceQueryException e)
             {
-                throw new ApplicationException(
-                    "An error occurred during query execution.", e);
+                MessageBox.Show(e.Message);
             }
         }
 

@@ -178,7 +178,7 @@ namespace Insurance_company.ViewModels
                     pw.ShowDialog();
                     _policies = new ObservableCollection<PolicySet>(); // Zerujemy kolekcję w razie kolejnego wyszukiwania
                 }
-            });
+            }, TaskScheduler.FromCurrentSynchronizationContext());
 
         }
         

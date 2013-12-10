@@ -11,7 +11,6 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 using Insurance_company.ServiceReference;
 using System.Data.Services.Client;
-using Insurance_company.Helpers.Database;
 
 namespace Insurance_company.ViewModels
 {
