@@ -109,6 +109,7 @@
     </Compile>
     <Compile Include="ViewModels\AddClientViewModel.cs" />
     <Compile Include="ViewModels\AddPolicyViewModel.cs" />
+    <Compile Include="ViewModels\AddUserViewModel.cs" />
     <Compile Include="ViewModels\ClientsViewModel.cs" />
     <Compile Include="ViewModels\EditClientViewModel.cs" />
     <Compile Include="ViewModels\EditPolicyViewModel.cs" />

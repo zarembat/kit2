@@ -45,7 +45,6 @@ namespace Insurance_company.ViewModels
                 };
             }
         }
-
         public ICommand SaveClientCommand { get { return new DelegateCommand(OnCustomerSave); } }
 
         public AddClientViewModel() {
@@ -111,7 +110,7 @@ namespace Insurance_company.ViewModels
                 string result = string.Empty;
                 switch (columnName)
                 {
-                    case "Surname":
+                    case "Client.Surname":
                         {
                             if (string.IsNullOrEmpty(Client.Surname))
                             {

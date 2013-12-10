@@ -65,26 +65,20 @@ namespace Insurance_company.ViewModels
 
         private void OnEmployeeQueryComplete(IAsyncResult result)
         {
-            try
+            DataServiceQuery<EmployeeSet> query = result.AsyncState as DataServiceQuery<EmployeeSet>;
+            
+            EmployeeSet employee = query.EndExecute(result).FirstOrDefault();
+            if (employee != null)
             {
-                DataServiceQuery<EmployeeSet> query = result.AsyncState as DataServiceQuery<EmployeeSet>;
-
-                EmployeeSet employee = query.EndExecute(result).FirstOrDefault();
-                if (employee != null)
-                {
-                    Application.Current.Dispatcher.Invoke(new Action(() =>
-                    {
-                        new EmployeePanel().Show(); // We open Employee panel
-                        LoginWindow.Close(); // We close login window
-                    }));
-                }
-                else
-                    MessageBox.Show("Invalid login or password");
+                Application.Current.Dispatcher.Invoke(new Action(() => {
+                    
+                    EmployeePanel ep = new EmployeePanel(employee);
+                    ep.Show(); // We open Employee panel
+                    LoginWindow.Close(); // We close login window
+                }));                
             }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.ToString());
-            }
+            else
+                MessageBox.Show("Invalid login or password");
         }    
 
     }

@@ -27,6 +27,7 @@ namespace Insurance_company.Views
         public EmployeePanel()
         {
             InitializeComponent();
+            Loaded += windowLoaded;
         }
 
         public EmployeePanel(EmployeeSet employee)
@@ -34,10 +35,13 @@ namespace Insurance_company.Views
         {
             this._employee = employee;
         }
-
+        private void windowLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_employee.Role == "User")
+                addUserTab.Visibility = Visibility.Collapsed;
+        }
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
             if (Tabs.SelectedIndex == 0)
             {
                 if (ClientsGrid != null && ClientsGrid.DataContext != null)
