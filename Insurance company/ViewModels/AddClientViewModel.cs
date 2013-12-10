@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 using Insurance_company.ServiceReference;
 using System.Data.Services.Client;
+using Insurance_company.Helpers.Database;
 
 namespace Insurance_company.ViewModels
 {
@@ -59,8 +60,8 @@ namespace Insurance_company.ViewModels
 
         private void OnCustomerSave(object parameter)
         {
-
-            try {
+            try
+            {
                 context.AddToAdressSet(Address);
                 context.AddRelatedObject(Address, "ClientSet", Client);
                 Client.AdressSet = Address;
@@ -75,26 +76,27 @@ namespace Insurance_company.ViewModels
             {
                 MessageBox.Show(ex.ToString());
             }
-
         }
 
         private void OnSaveChangesCompleted(IAsyncResult result)
         {
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+
+            try
             {
-                try
+                context.EndSaveChanges(result);
+                Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
-                    context.EndSaveChanges(result);
                     MessageBox.Show("Client added successfully!");
                     // Clearing the form:
                     Client = new ClientSet();
                     Address = new AdressSet();
-                }
-                catch (DataServiceRequestException ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                }
-            }));
+                }));
+            }
+            catch (DataServiceRequestException ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
         }
 
         public string Error
@@ -152,5 +154,7 @@ namespace Insurance_company.ViewModels
                 return result;
             }
         }
+
+
     }
 }

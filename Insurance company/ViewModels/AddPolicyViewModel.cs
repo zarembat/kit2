@@ -169,23 +169,22 @@ namespace Insurance_company.ViewModels
 
         private void OnSaveChangesCompleted(IAsyncResult result)
         {
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            try
             {
-                try
-                {
-                    context.EndSaveChanges(result);
+                context.EndSaveChanges(result);
+                Application.Current.Dispatcher.Invoke(new Action(() => {
                     MessageBox.Show("Policy added successfully!");
                     // Clear the form:
                     Policy = new PolicySet();
                     Address = new AdressSet();
                     House = new HouseSet();
                     Car = new CarSet();
-                }
-                catch (DataServiceRequestException ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                }
-            }));                
+                }));
+            }
+            catch (DataServiceRequestException ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }            
         }
     }
 }
