@@ -66,12 +66,14 @@ namespace Insurance_company.ViewModels
         private void OnEmployeeQueryComplete(IAsyncResult result)
         {
             DataServiceQuery<EmployeeSet> query = result.AsyncState as DataServiceQuery<EmployeeSet>;
-
+            
             EmployeeSet employee = query.EndExecute(result).FirstOrDefault();
             if (employee != null)
             {
                 Application.Current.Dispatcher.Invoke(new Action(() => {
-                    new EmployeePanel().Show(); // We open Employee panel
+                    
+                    EmployeePanel ep = new EmployeePanel(employee);
+                    ep.Show(); // We open Employee panel
                     LoginWindow.Close(); // We close login window
                 }));                
             }

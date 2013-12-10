@@ -11,6 +11,7 @@
         <viewModels:PoliciesViewModel x:Key="PoliciesVM" />
         <viewModels:SearchPolicyViewModel x:Key="SearchPolicyVM"/>
         <viewModels:SearchClientViewModel x:Key="SearchClientVM"/>
+        <viewModels:AddUserViewModel x:Key="AddUserVM"/>
         <Style TargetType="TextBox">
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="true">
@@ -100,7 +101,7 @@
                             <Label Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="139" FontWeight="Bold" FontSize="15">Add a new client</Label>
 
                             <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15">Surname</Label>
-                            <TextBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="Surname" Text="{Binding Path=AddClientVM.Client.Surname, Mode=TwoWay, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="Surname" Text="{Binding Client.Surname, Mode=TwoWay, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"/>
 
                             <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15">Name</Label>
                             <TextBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="Name" Text="{Binding Client.Name, Mode=TwoWay, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" />
@@ -484,6 +485,87 @@
                         <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="170" FontSize="15" Height="30">Number of employees</Label>
                         <TextBlock Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Margin="10,0,-7,0" Text="ba" Name="numberOfEmployees" Height="20"/>
                     </Grid>
+                </StackPanel>
+
+            </TabItem>
+
+            <TabItem Name="addUserTab" Header="Add user" Background="Gray">
+                <StackPanel>
+                    <Image Height="100" HorizontalAlignment="Left" VerticalAlignment="Top" Source="pack://application:,,,/Insurance company;component/Resources/logo.png" Margin="5,15,0,0"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Width="260" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,0,0,0" DataContext="{StaticResource AddUserVM}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"></RowDefinition>
+                                <RowDefinition Height="30"></RowDefinition>
+                                <RowDefinition Height="30"></RowDefinition>
+                                <RowDefinition Height="30"></RowDefinition>
+                                <RowDefinition Height="30"></RowDefinition>
+                                <RowDefinition Height="30"></RowDefinition>
+                                <RowDefinition Height="30"></RowDefinition>
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110 "></ColumnDefinition>
+                                <ColumnDefinition Width="150"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="139" FontWeight="Bold" FontSize="15">Add a new user</Label>
+
+                            <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15">Surname</Label>
+                            <TextBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="EmployeeSurname" Text="{Binding Employee.Surname, Mode=TwoWay, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15">Name</Label>
+                            <TextBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="EmployeeName" Text="{Binding Employee.Name, Mode=TwoWay, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15">Login</Label>
+                            <TextBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="EmployeeLogin" Text="{Binding Employee.Login, Mode=TwoWay, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15">Password</Label>
+                            <TextBox Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="EmployeePassword" Text="{Binding Employee.Password, Mode=TwoWay, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Height="30">Role</Label>
+                            <ComboBox Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="EmployeeRole" SelectedValue="{Binding Path=Employee.Role,  ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" Height="22">
+                                <ComboBox.ItemsSource>
+                                    <x:Array Type="{x:Type sys:String}">
+                                        <sys:String>Admin</sys:String>
+                                        <sys:String>User</sys:String>
+                                    </x:Array>
+                                </ComboBox.ItemsSource>
+                            </ComboBox>
+                            
+                            <Button Grid.Row="8" Grid.Column="1" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="15" FontWeight="Normal" Command="{Binding SaveUserCommand}">Add
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="IsEnabled" Value="false" />
+                                        <Style.Triggers>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding ElementName=EmployeeSurname, Path=(Validation.HasError)}" Value="false" />
+                                                    <Condition Binding="{Binding ElementName=EmployeeName, Path=(Validation.HasError)}" Value="false" />
+                                                    <Condition Binding="{Binding ElementName=EmployeeLogin, Path=(Validation.HasError)}" Value="false" />
+                                                    <Condition Binding="{Binding ElementName=EmployeePassword, Path=(Validation.HasError)}" Value="false" />
+                                                    <Condition Binding="{Binding ElementName=EmployeeRole, Path=(Validation.HasError)}" Value="false" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="IsEnabled" Value="true" />
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+
+                        </Grid>
+
+
+
+
+                    </Grid>
+
                 </StackPanel>
 
             </TabItem>

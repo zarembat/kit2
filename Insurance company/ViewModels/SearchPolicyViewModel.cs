@@ -110,7 +110,7 @@ namespace Insurance_company.ViewModels
             }
 
 
-            if (policy.Duration != null)
+            if (policy.Duration != 0)
             {
                 if (!policy.Duration.Equals(""))
                 {

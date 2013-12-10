@@ -85,6 +85,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="InsuranceCompanyModel.edmx.sql" />
     <Content Include="InsuranceCompanyService.svc" />
     <Content Include="Web.config" />
   </ItemGroup>

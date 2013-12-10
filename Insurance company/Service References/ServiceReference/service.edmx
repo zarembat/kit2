@@ -47,6 +47,7 @@
         <Property Name="Password" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
         <Property Name="Name" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
         <Property Name="Surname" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Role" Type="Edm.String" Nullable="false" />
       </EntityType>
       <EntityType Name="HouseSet">
         <Key>
