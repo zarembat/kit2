@@ -13,7 +13,7 @@ using Insurance_company.ServiceReference;
 
 namespace Insurance_company.ViewModels
 {
-    class AddClientViewModel : BaseViewModel
+    class AddClientViewModel : BaseViewModel, IDataErrorInfo
     {
         InsuranceCompanyEntities context = new InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
         private ClientSet _client;
@@ -103,6 +103,62 @@ namespace Insurance_company.ViewModels
                 Client = new ClientSet();
                 Address = new AdressSet();
             }, TaskContinuationOptions.OnlyOnRanToCompletion);
+        }
+
+        public string Error
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public string this[string columnName]
+        {
+            get
+            {
+                string result = string.Empty;
+                switch (columnName)
+                {
+                    case "Surname":
+                        {
+                            if (string.IsNullOrEmpty(Client.Surname))
+                            {
+                                result = "Surname is required!";
+                                break;
+                            }
+
+                            if (!Regex.IsMatch(Client.Surname, @"^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ]+$"))
+                                result = "Only letters!";
+
+                            break;
+                        }
+                    case "Name":
+                        {
+                            if (string.IsNullOrEmpty(Client.Name))
+                            {
+                                result = "Name is required!";
+                                break;
+                            }
+
+                            if (!Regex.IsMatch(Client.Name, @"^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ]+$"))
+                                result = "Only letters!";
+
+                            break;
+                        }
+                    case "PESEL":
+                        {
+                            if (string.IsNullOrEmpty(Client.PESEL))
+                            {
+                                result = "PESEL is required!";
+                                break;
+                            }
+
+                            if (!Regex.IsMatch(Client.PESEL, @"^[0-9]{11}$"))
+                                result = "11 digits!";
+
+                            break;
+                        }
+                };
+                return result;
+            }
         }
     }
 }

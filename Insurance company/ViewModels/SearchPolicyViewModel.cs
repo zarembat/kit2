@@ -18,12 +18,14 @@ using System.IO;
 using System.Data.SqlClient;
 using System.Data.EntityClient;
 using System.Data.Metadata.Edm;
+using Insurance_company.ServiceReference;
+using System.Linq.Expressions;
 
 namespace Insurance_company.ViewModels
 {
     class SearchPolicyViewModel : BaseViewModel
     {
-
+        InsuranceCompanyEntities context = new InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
         private ObservableCollection<ServiceReference.PolicySet> _policies;
 
         public ObservableCollection<ServiceReference.PolicySet> Policies
@@ -77,105 +79,103 @@ namespace Insurance_company.ViewModels
             _policy = new ServiceReference.PolicySet();
             Task.Factory.StartNew(() =>
             {
-                //using (var db = new InsuranceCompanyEntities())
-                //{
-                //    ;
-                //    Clients = new ObservableCollection<ClientSet>(db.ClientSet);
-                //}
+                
+                Clients = new ObservableCollection<ClientSet>(context.ClientSet);
+                
             });
         }
 
-        private string CreatePolicySearchQuery()
+        public Expression<Func<PolicySet, bool>> GetWhereLambda(PolicySet policy)
         {
+            ParameterExpression param = System.Linq.Expressions.Expression.Parameter(typeof(PolicySet), "p");
 
-            string esqlQuery = null;
+            System.Linq.Expressions.Expression clientExpr;
+            System.Linq.Expressions.Expression durationExpr;
+            System.Linq.Expressions.Expression typeExpr;
+            System.Linq.Expressions.Expression cond = null;
 
-            if (Policy.Duration > 0 || Policy.ObjectType != null || Policy.ClientClientId > 0) // If at least one search field is not empty, we create a query
-                esqlQuery += @"SELECT VALUE Policy FROM InsuranceCompanyEntities.PolicySet AS Policy WHERE ";
-               
-            if (Policy.Duration > 0) {
-                EntityParameter param = new EntityParameter(); // Creating a parameter
-                param.ParameterName = "Duration"; // Setting parameter name
-                param.Value = Policy.Duration; // Setting parameter value
-                PolicyParameters.Add(param); // Adding parameter to collection so that it can be used when executing the query
-                esqlQuery += "Policy.Duration = @Duration AND ";
+            if (policy.ClientClientId != 0)
+            {
+                if (!policy.ClientClientId.Equals(""))
+                {
+                    System.Linq.Expressions.Expression prop = System.Linq.Expressions.Expression.Property(param, "ClientClientId");
+                    System.Linq.Expressions.Expression val = System.Linq.Expressions.Expression.Constant(policy.ClientClientId);
+                    clientExpr = System.Linq.Expressions.Expression.Equal(prop, val);
+
+                    if (cond == null)
+                        cond = clientExpr;
+                    else
+                        cond = System.Linq.Expressions.Expression.And(cond, clientExpr);
+                }
             }
-            if (Policy.ObjectType != null && !Policy.ObjectType.Equals("")) {
-                EntityParameter param = new EntityParameter();
-                param.ParameterName = "ObjectType";
-                param.Value = Policy.ObjectType;
-                PolicyParameters.Add(param);
-                esqlQuery += "Policy.ObjectType = @ObjectType AND ";
+
+
+            if (policy.Duration != null)
+            {
+                if (!policy.Duration.Equals(""))
+                {
+                    System.Linq.Expressions.Expression prop = System.Linq.Expressions.Expression.Property(param, "Duration");
+                    System.Linq.Expressions.Expression val = System.Linq.Expressions.Expression.Constant(policy.Duration);
+                    durationExpr = System.Linq.Expressions.Expression.Equal(prop, val);
+
+                    if (cond == null)
+                        cond = durationExpr;
+                    else
+                        cond = System.Linq.Expressions.Expression.And(cond, durationExpr);
+                }
             }
-            if (Policy.ClientClientId > 0) {
-                EntityParameter param = new EntityParameter();
-                param.ParameterName = "ClientClientId";
-                param.Value = Policy.ClientClientId;
-                PolicyParameters.Add(param);
-                esqlQuery += "Policy.ClientClientId = @ClientClientId AND ";
+
+            if (policy.ObjectType != null)
+            {
+                if (!policy.ObjectType.Equals(""))
+                {
+                    System.Linq.Expressions.Expression prop = System.Linq.Expressions.Expression.Property(param, "ObjectType");
+                    System.Linq.Expressions.Expression val = System.Linq.Expressions.Expression.Constant(policy.ObjectType);
+                    typeExpr = System.Linq.Expressions.Expression.Equal(prop, val);
+
+                    if (cond == null)
+                        cond = typeExpr;
+                    else
+                        cond = System.Linq.Expressions.Expression.And(cond, typeExpr);
+                }
             }
-            if (esqlQuery != null)
-                esqlQuery = esqlQuery.Remove(esqlQuery.Length - 5);
-            return esqlQuery;
+
+            if (cond != null)
+                return System.Linq.Expressions.Expression.Lambda<Func<PolicySet, bool>>(cond, param);
+
+            return null;
         }
 
         private void OnPolicySearch(object parameter)
         {
+            IEnumerable<PolicySet> policies = null;
+            Expression<Func<PolicySet, bool>> myLambda = null;
+            _policies = new ObservableCollection<PolicySet>();
 
-            string policyQuery = CreatePolicySearchQuery(); // Creating query
-
-            if (policyQuery == null) // If nothing was specified, return
-                return;
-
-            _policies = new ObservableCollection<ServiceReference.PolicySet>();
-
-            Task.Factory.StartNew(() =>
+            myLambda = GetWhereLambda(Policy);
+            if (myLambda == null)
+                MessageBox.Show("All fields are empty");
+            else
             {
-                using (EntityConnection conn = new EntityConnection("name=InsuranceCompanyEntities"))
+                policies = context.PolicySet.Where(myLambda);
+
+                foreach (PolicySet policy in policies)
                 {
-                    conn.Open(); // Opening database connection
-
-                    using (EntityCommand cmd = new EntityCommand(policyQuery, conn)) // Creating a command
-                    {
-
-                        foreach (EntityParameter param in PolicyParameters) // Adding parameters which we added before to the command
-                        {
-                            cmd.Parameters.Add(param);
-                        }
-
-                        using (DbDataReader rdr = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) // Executing query
-                        {
-                            while (rdr.Read()) // Reading records found
-                            {
-                                ServiceReference.PolicySet policy = new ServiceReference.PolicySet();
-                                policy.PolicyId = (int)rdr["PolicyId"];
-                                policy.Duration = (int)rdr["Duration"];
-                                policy.StartDate = (DateTime)rdr["StartDate"];
-                                policy.EndDate = (DateTime)rdr["EndDate"];
-                                policy.ObjectType = rdr["ObjectType"].ToString();
-                                policy.ClientClientId = (int)rdr["ClientClientId"];
-                                _policies.Add(policy);
-                            }
-                        }
-                    }
-
-                    conn.Close();
-
+                    _policies.Add(policy);
                 }
-            }).ContinueWith(t =>
-            {
-                if (_policies.Count > 0) // If something was found, we display the results
+
+                if (_policies.Count() == 0)
+                    MessageBox.Show("No policies matching these criteria were found!");
+
+                else
                 {
                     PoliciesWindow pw = new PoliciesWindow();
                     pw.DataContext = new PoliciesViewModel(_policies);
                     pw.ShowDialog();
+                    //_policies = new ObservableCollection<PolicySet>(); // Zerujemy kolekcję w razie kolejnego wyszukiwania
                 }
-                else
-                    MessageBox.Show("No policies matching these criteria were found!");
+            }
 
-                PolicyParameters = new List<EntityParameter>(); // Zeroing the parameters
-
-            }, TaskScheduler.FromCurrentSynchronizationContext());
         }
         
     }

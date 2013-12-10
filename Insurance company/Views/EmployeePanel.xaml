@@ -100,7 +100,7 @@
                             <Label Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="139" FontWeight="Bold" FontSize="15">Add a new client</Label>
 
                             <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15">Surname</Label>
-                            <TextBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="Surname" Text="{Binding Client.Surname, Mode=TwoWay, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="Surname" Text="{Binding Path=AddClientVM.Client.Surname, Mode=TwoWay, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"/>
 
                             <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15">Name</Label>
                             <TextBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="Name" Text="{Binding Client.Name, Mode=TwoWay, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" />
