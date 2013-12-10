@@ -19,8 +19,7 @@ namespace Insurance_company.ViewModels
     {
 
         private ObservableCollection <ClientSet> _clients;
-        InsuranceCompanyEntities context = new InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
-
+        InsuranceCompanyEntities context = new InsuranceCompanyEntities(svcUri);
         public ObservableCollection <ClientSet> Clients
         {
             get { return _clients; }
@@ -57,12 +56,30 @@ namespace Insurance_company.ViewModels
 
         public ClientsViewModel()
         {
-            var GetClientsTask = Task.Factory.StartNew(() =>
-            {
-                _clients = new ObservableCollection <ClientSet>(context.ClientSet);
+            DataServiceQuery<ClientSet> query = (DataServiceQuery<ClientSet>)(from client in context.ClientSet select client);
 
-            });
-            GetClientsTask.Wait();
+            try
+            {
+                query.BeginExecute(OnClientsQueryComplete, query);
+            }
+            catch (DataServiceQueryException e)
+            {
+                throw new ApplicationException(
+                    "An error occurred during query execution.", e);
+            }
+        }
+
+        private void OnClientsQueryComplete(IAsyncResult result)
+        {
+            try
+            {
+                DataServiceQuery<ClientSet> query = result.AsyncState as DataServiceQuery<ClientSet>;
+                Clients = new ObservableCollection<ClientSet>(query.EndExecute(result));
+            }
+            catch (DataServiceQueryException e)
+            {
+                MessageBox.Show(e.ToString());
+            }
         }
 
         public ClientsViewModel(ObservableCollection <ClientSet> clients)

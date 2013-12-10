@@ -9,6 +9,7 @@ using Insurance_company.Views;
 using System.Windows;
 using System.Collections.ObjectModel;
 using Insurance_company.ServiceReference;
+using System.Data.Services.Client;
 
 namespace Insurance_company.ViewModels
 {
@@ -28,7 +29,7 @@ namespace Insurance_company.ViewModels
                 if (value != _policy)
                 {
                     _policy = value;
-                    RaisePropertyChanged(() => "_policy");
+                    RaisePropertyChanged(() => Policy);
                 };
             }
         }
@@ -42,7 +43,7 @@ namespace Insurance_company.ViewModels
                 if (value != _house)
                 {
                     _house = value;
-                    RaisePropertyChanged(() => "_house");
+                    RaisePropertyChanged(() => House);
                 };
             }
         }
@@ -56,7 +57,7 @@ namespace Insurance_company.ViewModels
                 if (value != _address)
                 {
                     _address = value;
-                    RaisePropertyChanged(() => "_address");
+                    RaisePropertyChanged(() => Address);
                 };
             }
         }
@@ -70,7 +71,7 @@ namespace Insurance_company.ViewModels
                 if (value != _car)
                 {
                     _car = value;
-                    RaisePropertyChanged(() => "_car");
+                    RaisePropertyChanged(() => Car);
                 };
             }
         }
@@ -99,70 +100,120 @@ namespace Insurance_company.ViewModels
         public EditPolicyViewModel(PolicySet policy)
         {
             _policy = policy;
-            var LoadPolicyTask = Task.Factory.StartNew(() =>
+            ObjectType = _policy.ObjectType;
+            
+            if (ObjectType.Equals(CAR)) // Object is a car
             {
-                
+                InsuranceCompanyEntities context = new InsuranceCompanyEntities(svcUri);
 
-                    Clients = new ObservableCollection<ClientSet>(context.ClientSet);
-                    ObjectType = _policy.ObjectType;
-                    if (_policy.ObjectType.Equals(CAR)) // Object is a car
-                    {
-                        var car = context.CarSet.Where(c => c.Policy_PolicyId == policy.PolicyId).FirstOrDefault(); // Looking for a car in the database
-                        if (car == null)
-                            MessageBox.Show("No car...");
-                        else
-                        {
-                            _car = car;
-                        }
-                    }
-                    else if (_policy.ObjectType.Equals(HOUSE)) // Object is a house
-                    {
-                        var house = context.HouseSet.Where(h => h.Policy_PolicyId == policy.PolicyId).FirstOrDefault(); // Looking for a house
-                        var address = context.AdressSet.Where(a => a.AdressId == house.AdressSet.AdressId).FirstOrDefault(); // Getting house's address
-                        if (address == null)//house == null || 
-                            MessageBox.Show("No house...");
-                        else
-                        {
-                            _house = house;
-                            _address = address;
-                        }
-                    }
+                DataServiceQuery<CarSet> query = (DataServiceQuery<CarSet>)(from car in context.CarSet
+                                                                                      where car.Policy_PolicyId == _policy.PolicyId
+                                                                                      select car);
+
+                try
+                {
+                    query.BeginExecute(OnCarQueryComplete, query);
+                }
+                catch (DataServiceQueryException e)
+                {
+                    throw new ApplicationException(
+                        "An error occurred during query execution.", e);
+                }
+            }
+            else if (ObjectType.Equals(HOUSE)) // Object is a house
+            {
+
+                //DataServiceQuery query = (DataServiceQuery)(from house in context.HouseSet
+                //                                            join address in context.AdressSet
+                //                                            on house.AdressSet_AdressId equals address.AdressId
+                //                                            where house.Policy_PolicyId == _policy.PolicyId
+                //                                            select new { house, address });
+
+                //try
+                //{
+                //    query.BeginExecute(OnHouseQueryComplete, query);
+                //}
+                //catch (DataServiceQueryException e)
+                //{
+                //    throw new ApplicationException(
+                //        "An error occurred during query execution.", e);
+                //}
+
+                //Uri houseUri = new Uri(svcUri.AbsoluteUri + "/HouseSet/?Policy_PolicyId=" + _policy.PolicyId);
+                //Uri addressUri = new UriInsuranceCompanyEntities context = new InsuranceCompanyEntities(svcUri);
+
+                DataServiceQuery<HouseSet> query = (DataServiceQuery<HouseSet>)(from house in context.HouseSet.Expand("AdressSet")
+                                                                                where house.Policy_PolicyId == _policy.PolicyId
+                                                                                select house);
+
+                try
+                {
+                    query.BeginExecute(OnHouseQueryComplete, query);
+                }
+                catch (DataServiceQueryException e)
+                {
+                    throw new ApplicationException(
+                        "An error occurred during query execution.", e);
+                }
                 
-            });
-            LoadPolicyTask.Wait();
+            }    
+        }
+
+        private void OnCarQueryComplete(IAsyncResult result)
+        {
+            DataServiceQuery<CarSet> query = result.AsyncState as DataServiceQuery<CarSet>;
+            Car = query.EndExecute(result).FirstOrDefault();
+        }
+
+        private void OnHouseQueryComplete(IAsyncResult result)
+        {
+            DataServiceQuery<HouseSet> query = result.AsyncState as DataServiceQuery<HouseSet>;
+            House = query.EndExecute(result).FirstOrDefault();
+            Address = House.AdressSet;
         }
 
         private void OnPolicySave(object parameter)
         {
 
-            Task.Factory.StartNew(() =>
+            context.AttachTo("PolicySet", Policy);
+            context.UpdateObject(Policy);
+
+            if (ObjectType.Equals(CAR))
             {
+                context.UpdateObject(Car);
+            }
+            if (ObjectType.Equals(House))
+            {
+                context.UpdateObject(House);
+                context.UpdateObject(Address);
+            }
 
-                context.AttachTo("PolicySet", Policy);
-                context.UpdateObject(Policy);
-
-                if (ObjectType.Equals(CAR))
-                {
-                    context.UpdateObject(Car);
-                }
-                if (ObjectType.Equals(House))
-                {
-
-                    context.AttachTo("HouseSet", House);
-                    context.UpdateObject(House);
-
-                    context.AttachTo("AdressSet", Address);
-                    context.UpdateObject(Address);
-
-                }
-
-                context.SaveChanges(); // Saving changes to the database                 
+            try
+            {
+                context.BeginSaveChanges(OnSaveChangesCompleted, null);
+            }
+            catch (DataServiceClientException ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
                 
-            }).ContinueWith(t => {
-                MessageBox.Show("Saved!");
-            }, TaskContinuationOptions.OnlyOnRanToCompletion);
         }
 
+        private void OnSaveChangesCompleted(IAsyncResult result)
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                try
+                {
+                    context.EndSaveChanges(result);
+                    MessageBox.Show("Policy edited successfully!");
+                }
+                catch (DataServiceRequestException ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            }));
+        }
 
     }
 }

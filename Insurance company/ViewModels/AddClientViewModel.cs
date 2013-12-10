@@ -10,12 +10,13 @@ using System.Data.Entity.Validation;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using Insurance_company.ServiceReference;
+using System.Data.Services.Client;
 
 namespace Insurance_company.ViewModels
 {
     class AddClientViewModel : BaseViewModel, IDataErrorInfo
     {
-        InsuranceCompanyEntities context = new InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
+        InsuranceCompanyEntities context = new InsuranceCompanyEntities(svcUri);
         private ClientSet _client;
         public ClientSet Client
         {
@@ -56,53 +57,44 @@ namespace Insurance_company.ViewModels
             _address = new AdressSet();
         }
 
-        private async Task saveClient()
-        {
-            //using (var db = new InsuranceCompanyEntities())
-            //{
-            //    try // Adding new client
-            //    {
-            //        Client.AdressSet = Address;
-            //        db.ClientSet.Add(Client);
-            //        await db.SaveChangesAsync(); // Saving changes to the database
-            //    }
-            //    catch (DbEntityValidationException e)
-            //    {
-            //        MessageBox.Show("Adding a new client caused an error: " + e.Message);
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        MessageBox.Show("Adding a new client caused an error: " + e.Message);
-            //    }
-            //}
-
-            
-            try // Adding new client
-            {
-                Client.AdressSet = Address;
-                context.AddObject("ClientSet", Client);
-                //await context.BeginSaveChanges(null, null); // Saving changes to the database
-            }
-            catch (DbEntityValidationException e)
-            {
-                MessageBox.Show("Adding a new client caused an error: " + e.Message);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("Adding a new client caused an error: " + e.Message);
-            }
-            
-        }
-
         private void OnCustomerSave(object parameter)
         {
-            Task.Factory.StartNew(() => saveClient()).ContinueWith(t =>
+
+            try {
+                context.AddToAdressSet(Address);
+                context.AddRelatedObject(Address, "ClientSet", Client);
+                Client.AdressSet = Address;
+                Address.ClientSet.Add(Client);
+                context.BeginSaveChanges(OnSaveChangesCompleted, null);
+            }
+            catch (DataServiceClientException ex)
             {
-                MessageBox.Show("Client added successfully!");
-                // Clearing the form:
-                Client = new ClientSet();
-                Address = new AdressSet();
-            }, TaskContinuationOptions.OnlyOnRanToCompletion);
+                MessageBox.Show(ex.ToString());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
+        }
+
+        private void OnSaveChangesCompleted(IAsyncResult result)
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                try
+                {
+                    context.EndSaveChanges(result);
+                    MessageBox.Show("Client added successfully!");
+                    // Clearing the form:
+                    Client = new ClientSet();
+                    Address = new AdressSet();
+                }
+                catch (DataServiceRequestException ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            }));
         }
 
         public string Error

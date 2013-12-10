@@ -9,14 +9,14 @@ using Insurance_company.Views;
 using System.Windows;
 using System.Data.Entity.Validation;
 using Insurance_company.ServiceReference;
-
+using System.Data.Services.Client;
 
 namespace Insurance_company.ViewModels
 {
     class EditClientViewModel : BaseViewModel
     {
 
-        InsuranceCompanyEntities context = new InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
+        InsuranceCompanyEntities context = new InsuranceCompanyEntities(svcUri);
         private ClientSet _client;
         public ClientSet Client
         {
@@ -26,7 +26,7 @@ namespace Insurance_company.ViewModels
                 if (value != _client)
                 {
                     _client = value;
-                    RaisePropertyChanged(() => "_client");
+                    RaisePropertyChanged(() => Client);
                 };
             }
         }
@@ -40,7 +40,7 @@ namespace Insurance_company.ViewModels
                 if (value != _address)
                 {
                     _address = value;
-                    RaisePropertyChanged(() => "_address");
+                    RaisePropertyChanged(() => Address);
                 };
             }
         }
@@ -53,38 +53,73 @@ namespace Insurance_company.ViewModels
 
         public EditClientViewModel(ClientSet client) // This is called from ClientsViewModel when an item is clicked twice
         {
-            _client = client;
-            var address = context.AdressSet.Where(a => a.AdressId == client.AdressAdressId).FirstOrDefault(); // Looking for an Address
-            if (address != null)
-                _address = address;
+
+            Client = client;
+            try {
+                DataServiceQuery<AdressSet> query = (DataServiceQuery<AdressSet>)(from address in context.AdressSet
+                                                                                  where address.AdressId == _client.AdressAdressId
+                                                                                  select address);            
+                query.BeginExecute(OnAddressQueryComplete, query);
+            }
+            catch (DataServiceQueryException e)
+            {
+                throw new ApplicationException(
+                    "An error occurred during query execution.", e);
+            }
+            catch (Exception e)
+            {
+                throw new ApplicationException(
+                    "An error occurred during query execution.", e);
+            }
+            
+        }
+        private void OnAddressQueryComplete(IAsyncResult result)
+        {
+            DataServiceQuery<AdressSet> query = result.AsyncState as DataServiceQuery<AdressSet>;
+
+            AdressSet address = query.EndExecute(result).FirstOrDefault();
+            Application.Current.Dispatcher.Invoke(new Action(() => {
+            if (address != null)            
+                    Address = address;
             else
-                MessageBox.Show("The address was not found for this client (ID: " + client.AdressAdressId + "!");
+                MessageBox.Show("No address for client with ID: " + _client.ClientId + " could be found!");
+            }));
             
         }
 
         private void OnCustomerSave(object parameter)
         {
-            Task.Factory.StartNew(() =>
+            try
             {
-
-                try
-                {
-                    context.AttachTo("ClientSet", Client);
-                    context.UpdateObject(Client);
-                    context.UpdateObject(Address);
-                    context.SaveChanges(); 
-                }
-                catch (DbEntityValidationException e)
-                {
-                    MessageBox.Show(e.Message);
-                }
-
-            }).ContinueWith(t =>
+                context.AttachTo("ClientSet", Client);
+                context.UpdateObject(Client);
+                context.UpdateObject(Address);            
+                context.BeginSaveChanges(OnSaveChangesCompleted, null);
+            }
+            catch (DataServiceClientException ex)
             {
-                MessageBox.Show("Client edited successfully!");
-            }, TaskContinuationOptions.OnlyOnRanToCompletion);
+                MessageBox.Show(ex.ToString());
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
         }
 
-
+        private void OnSaveChangesCompleted(IAsyncResult result)
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                try
+                {
+                    context.EndSaveChanges(result);
+                    MessageBox.Show("Client edited successfully!");
+                }
+                catch (DataServiceRequestException ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            }));
+        }
     }
 }

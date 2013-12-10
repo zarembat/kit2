@@ -42,7 +42,7 @@ namespace Insurance_company.ViewModels
                 if (_clients != value)
                 {
                     _clients = value;
-                    RaisePropertyChanged(() => "Clients");
+                    RaisePropertyChanged(() => Clients);
                 }
             }
 
@@ -57,7 +57,7 @@ namespace Insurance_company.ViewModels
                 if (value != _client)
                 {
                     _client = value;
-                    RaisePropertyChanged(() => "_client");
+                    RaisePropertyChanged(() => Client);
                 };
             }
         }
@@ -71,7 +71,7 @@ namespace Insurance_company.ViewModels
                 if (value != _address)
                 {
                     _address = value;
-                    RaisePropertyChanged(() => "_address");
+                    RaisePropertyChanged(() => Address);
                 };
             }
         }
@@ -225,61 +225,66 @@ namespace Insurance_company.ViewModels
             Expression<Func<AdressSet, bool>> myLambdaAddress = null;
             bool label = false;
 
-            myLambdaAddress = GetWhereLambdaAddress(Address);
-            if (myLambdaAddress != null)
+            Task.Factory.StartNew(() =>
             {
-                addresses = context.AdressSet.Where(myLambdaAddress);
-                if (addresses.Count() == 0)
-                    addresses = null;
-            }
-                
-            if (addresses == null && myLambdaAddress != null)
-                MessageBox.Show("No clients matching these address criteria were found!");
-
-            else
-            {
-
-                if (addresses == null)
+                myLambdaAddress = GetWhereLambdaAddress(Address);
+                if (myLambdaAddress != null)
                 {
-                    myLambda = GetWhereLambdaClient(Client, -1);
-
-                    if (myLambda != null)
-                    {
-                        clients = context.ClientSet.Where(myLambda);
-                        label = true;
-                        foreach (ClientSet client in clients)
-                        {
-                            _clients.Add(client);
-                        }
-                    }
+                    addresses = context.AdressSet.Where(myLambdaAddress);
+                    if (addresses.Count() == 0)
+                        addresses = null;
                 }
-                    
+
+                if (addresses == null && myLambdaAddress != null)
+                    MessageBox.Show("No clients matching these address criteria were found!");
+
                 else
                 {
-                    foreach (AdressSet address in addresses)
+
+                    if (addresses == null)
                     {
-                        myLambda = GetWhereLambdaClient(Client, address.AdressId);
+                        myLambda = GetWhereLambdaClient(Client, -1);
 
                         if (myLambda != null)
                         {
-                            label = true;
                             clients = context.ClientSet.Where(myLambda);
-
+                            label = true;
                             foreach (ClientSet client in clients)
                             {
                                 _clients.Add(client);
                             }
                         }
-
                     }
+
+                    else
+                    {
+                        foreach (AdressSet address in addresses)
+                        {
+                            myLambda = GetWhereLambdaClient(Client, address.AdressId);
+
+                            if (myLambda != null)
+                            {
+                                label = true;
+                                clients = context.ClientSet.Where(myLambda);
+
+                                foreach (ClientSet client in clients)
+                                {
+                                    _clients.Add(client);
+                                }
+                            }
+
+                        }
+                    }
+
                 }
+            }).ContinueWith(t =>
+            {
 
                 if (!label)
                     MessageBox.Show("All fields are empty");
 
                 else
                 {
-
 
                     if (_clients.Count() == 0)
                         MessageBox.Show("No clients matching these criteria were found!");
@@ -292,8 +297,8 @@ namespace Insurance_company.ViewModels
                         _clients = new ObservableCollection<ClientSet>(); // Zerujemy kolekcję w razie kolejnego wyszukiwania
                     }
                 }
+            }, TaskScheduler.FromCurrentSynchronizationContext());
 
-            }
         }
             
     }

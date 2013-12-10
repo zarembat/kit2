@@ -9,13 +9,14 @@ using Insurance_company.Views;
 using System.Windows;
 using System.Collections.ObjectModel;
 using Insurance_company.ServiceReference;
+using System.Data.Services.Client;
 
 namespace Insurance_company.ViewModels
 {
     class PoliciesViewModel : BaseViewModel
     {
         private ObservableCollection<PolicySet> _policies;
-        InsuranceCompanyEntities context = new InsuranceCompanyEntities(new Uri("http://localhost:48833/InsuranceCompanyService.svc"));
+        InsuranceCompanyEntities context = new InsuranceCompanyEntities(svcUri);
         public ObservableCollection<PolicySet> Policies
         {
             get { return _policies; }
@@ -53,18 +54,36 @@ namespace Insurance_company.ViewModels
 
         public PoliciesViewModel()
         {
-            var GetPoliciesTask = Task.Factory.StartNew(() =>
+
+            DataServiceQuery<PolicySet> query = (DataServiceQuery<PolicySet>)(from policy in context.PolicySet select policy);
+
+            try
             {
-                
-                _policies = new ObservableCollection<PolicySet>(context.PolicySet);
-                
-            });
-            GetPoliciesTask.Wait();
+                query.BeginExecute(OnPoliciesQueryComplete, query);
+            }
+            catch (DataServiceQueryException e)
+            {
+                throw new ApplicationException(
+                    "An error occurred during query execution.", e);
+            }
         }
 
         public PoliciesViewModel(ObservableCollection<PolicySet> policies)
         {
             _policies = policies;
+        }
+
+        private void OnPoliciesQueryComplete(IAsyncResult result)
+        {
+            try
+            {
+                DataServiceQuery<PolicySet> query = result.AsyncState as DataServiceQuery<PolicySet>;
+                Policies = new ObservableCollection<PolicySet>(query.EndExecute(result));
+            }
+            catch (DataServiceQueryException e)
+            {
+                MessageBox.Show(e.ToString());
+            }
         }
         
     }

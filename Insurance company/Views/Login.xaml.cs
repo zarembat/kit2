@@ -35,5 +35,11 @@ namespace Insurance_company.Views
             if (login.Text.Length > 0 && PasswordInput.Password.Length > 0)
                 button.IsEnabled = true;
         }
+
+        private void OpenFacebookWindow(object sender, RoutedEventArgs e)
+        {
+            new FacebookLoginWindow().Show();
+            this.Close();
+        }
     }
 }

@@ -26,6 +26,7 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
             </Grid.RowDefinitions>
 
             <Label Grid.Row="0" Width="100">Login</Label>
@@ -33,6 +34,9 @@
             <Label Grid.Row="2">Password</Label>
             <PasswordBox PasswordChanged="passwordChanged" Name="PasswordInput" Grid.Row="3"/>
             <Button IsDefault="True" IsEnabled="False" Name="button" Grid.Row="4" Margin="0,5,0,0" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=LoginWindow}">Log in</Button>
+            <TextBlock Grid.Row="5" >
+                <Hyperlink Click="OpenFacebookWindow" Foreground="#FFE4E7EA" TextDecorations="{x:Null}">Log in with Facebook</Hyperlink>
+            </TextBlock>
         </Grid>
     </Grid>
 </Window>
