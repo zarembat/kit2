@@ -122,6 +122,9 @@
     <Compile Include="Views\EditPolicy.xaml.cs">
       <DependentUpon>EditPolicy.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\FacebookLoginWindow.xaml.cs">
+      <DependentUpon>FacebookLoginWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
@@ -165,6 +168,10 @@
     <Compile Include="Views\EmployeePanel.xaml.cs">
       <DependentUpon>EmployeePanel.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\FacebookLoginWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Login.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
