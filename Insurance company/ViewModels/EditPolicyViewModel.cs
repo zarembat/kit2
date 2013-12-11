@@ -10,6 +10,7 @@ using System.Windows;
 using System.Collections.ObjectModel;
 using Insurance_company.ServiceReference;
 using System.Data.Services.Client;
+using System.Text.RegularExpressions;
 
 namespace Insurance_company.ViewModels
 {
@@ -174,6 +175,8 @@ namespace Insurance_company.ViewModels
 
         private void OnPolicySave(object parameter)
         {
+            if (!Validation())
+                return;
 
             context.AttachTo("PolicySet", Policy);
             context.UpdateObject(Policy);
@@ -215,5 +218,125 @@ namespace Insurance_company.ViewModels
             }));
         }
 
+        public bool Validation()
+        {
+            if (Policy.ClientClientId <= 0)
+            {
+                MessageBox.Show("Cliend ID is required!");
+                return false;
+            }
+
+            string clientid = Policy.ClientClientId.ToString();
+            if (!Regex.IsMatch(clientid, @"^[0-9]+$"))
+            {
+                MessageBox.Show("Client ID: Only digits!");
+                return false;
+            }
+
+            if (Policy.ObjectType == null)
+            {
+                MessageBox.Show("Object type is required!");
+                return false;
+            }
+
+            if (Policy.Duration < 1 || Policy.Duration > 5)
+            {
+                MessageBox.Show("Choose duration!");
+                return false;
+            }
+
+            if (Policy.ObjectType.Equals(CAR))
+            {
+                if (string.IsNullOrEmpty(Car.Brand))
+                {
+                    MessageBox.Show("Brand is required!");
+                    return false;
+                }
+
+                if (!Regex.IsMatch(Car.Brand, @"^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ]+$"))
+                {
+                    MessageBox.Show("Brand: Only letters!");
+                    return false;
+                }
+
+                if (Car.Year == 0)
+                {
+                    MessageBox.Show("Year is required!");
+                    return false;
+                }
+
+                if (Car.Year < 1950 || Car.Year > System.DateTime.Now.Year)
+                {
+                    MessageBox.Show("Wrong year!");
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(Car.VinNumber))
+                {
+                    MessageBox.Show("VIN number is required!");
+                    return false;
+                }
+
+                if (!Regex.IsMatch(Car.VinNumber, @"^[\p{L}\p{N}]+$"))
+                {
+                    MessageBox.Show("VIN number: Only letters and numbers!");
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(Car.Engine))
+                {
+                    MessageBox.Show("Engine is required!");
+                    return false;
+                }
+
+                if (!Regex.IsMatch(Car.Engine, @"^[\p{L}\p{N}]+$"))
+                {
+                    MessageBox.Show("Engine: Only letters and numbers!");
+                    return false;
+                }
+
+                if (Car.Type == null)
+                {
+                    MessageBox.Show("Choose type of car!");
+                    return false;
+                }
+            }
+
+            if (Policy.ObjectType.Equals(HOUSE))
+            {
+                if (House.Year == 0)
+                {
+                    MessageBox.Show("Year is required!");
+                    return false;
+                }
+
+                if (House.Year < 1900 || House.Year > System.DateTime.Now.Year)
+                {
+                    MessageBox.Show("Wrong year!");
+                    return false;
+                }
+
+                if (House.Size == 0)
+                {
+                    MessageBox.Show("Size is required!");
+                    return false;
+                }
+
+                if (House.Size < 20 || House.Size > 2000)
+                {
+                    MessageBox.Show("Wrong size!");
+                    return false;
+                }
+
+                if (House.Type == null)
+                {
+                    MessageBox.Show("Choose house type!");
+                    return false;
+                }
+
+            }
+
+            return true;
+        }
     }
 }

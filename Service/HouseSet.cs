@@ -15,8 +15,8 @@ namespace Service
     public partial class HouseSet
     {
         public int ObjectId { get; set; }
-        public int Year { get; set; }
-        public int Size { get; set; }
+        public int? Year { get; set; }
+        public int? Size { get; set; }
         public string Type { get; set; }
         public int Policy_PolicyId { get; set; }
         public int AdressSet_AdressId { get; set; }

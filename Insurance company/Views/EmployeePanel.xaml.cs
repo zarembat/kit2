@@ -78,6 +78,8 @@ namespace Insurance_company.Views
                 CarGrid.Visibility = System.Windows.Visibility.Collapsed;
             }
         }
+        
+
 
     }
 }

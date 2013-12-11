@@ -17,7 +17,7 @@ namespace Service
         public int ObjectId { get; set; }
         public string Type { get; set; }
         public string Brand { get; set; }
-        public int Year { get; set; }
+        public int? Year { get; set; }
         public string VinNumber { get; set; }
         public string Engine { get; set; }
         public int Policy_PolicyId { get; set; }

@@ -12,15 +12,6 @@
         <viewModels:SearchPolicyViewModel x:Key="SearchPolicyVM"/>
         <viewModels:SearchClientViewModel x:Key="SearchClientVM"/>
         <viewModels:AddUserViewModel x:Key="AddUserVM"/>
-        <Style TargetType="TextBox">
-            <Style.Triggers>
-                <Trigger Property="Validation.HasError" Value="true">
-                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}" />
-                    <Setter Property="BorderBrush" Value="Red"/>
-                    <Setter Property="BorderThickness" Value="1" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
     </Window.Resources>
     <Grid>
 
@@ -122,27 +113,7 @@
                             <Label Grid.Row="7" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15">Zip Code</Label>
                             <TextBox Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="zipcode" Text="{Binding Address.ZipCode, Mode=TwoWay, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" />
 
-                            <Button Grid.Row="8" Grid.Column="1" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="15" FontWeight="Normal" Command="{Binding SaveClientCommand}">Add
-                                <Button.Style>
-                                    <Style TargetType="{x:Type Button}">
-                                        <Setter Property="IsEnabled" Value="false" />
-                                        <Style.Triggers>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding ElementName=Surname, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=Name, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=pesel, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=town, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=street, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=houseNumber, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=zipcode, Path=(Validation.HasError)}" Value="false" />
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="IsEnabled" Value="true" />
-                                            </MultiDataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                            </Button>
+                            <Button Grid.Row="8" Grid.Column="1" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="15" FontWeight="Normal" Command="{Binding SaveClientCommand}">Add</Button>
 
 
                         </Grid>
@@ -243,27 +214,7 @@
 
                             <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Grid.ColumnSpan="2" Height="30" Grid.RowSpan="2">Engine</Label>
                             <TextBox Grid.Row="4" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Bottom" Width="141" Name="engine" Height="22" Margin="0,0,-2,0" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type StackPanel}}, Path=DataContext.Car.Engine,  ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"/>
-                            <Button Grid.Row="5" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Bottom" Width="106" FontSize="15" Command="{Binding SavePolicyCommand}" Height="24">Add
-                                <Button.Style>
-                                    <Style TargetType="{x:Type Button}">
-                                        <Setter Property="IsEnabled" Value="false" />
-                                        <Style.Triggers>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding ElementName=duration, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=Brand, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=year, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=vin, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=type, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=engine, Path=(Validation.HasError)}" Value="false" />
-                                                    
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="IsEnabled" Value="true" />
-                                            </MultiDataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                            </Button>
+                            <Button Grid.Row="5" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Bottom" Width="106" FontSize="15" Command="{Binding SavePolicyCommand}" Height="24">Add</Button>
                         </Grid>
 
                         <Grid Grid.Row="4" VerticalAlignment="Top" Name="HouseGrid" HorizontalAlignment="Left" Margin="0,0,0,0" Height="160" Width="500" Grid.ColumnSpan="4" Visibility="Collapsed">
@@ -312,29 +263,8 @@
 
                             <Label Grid.Row="3" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Grid.ColumnSpan="2" Height="30">Zip Code</Label>
                             <TextBox Grid.Row="3" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="zipcodep" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type StackPanel}}, Path=DataContext.Address.ZipCode,  ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" Height="22" />
-                            <Button Grid.Row="4" Width="141" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="15" FontWeight="Normal" Command="{Binding SavePolicyCommand}" Height="26" Content="Add" Grid.Column="1" Margin="1,0,0,5">
-                                <Button.Style>
-                                    <Style TargetType="{x:Type Button}">
-                                        <Setter Property="IsEnabled" Value="true" />
-                                        <Style.Triggers>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding ElementName=clientID, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=duration, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=size, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=yearh, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=townp, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=streetp, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=houseNumberp, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=zipcodep, Path=(Validation.HasError)}" Value="false" />
-                                                    <Condition Binding="{Binding ElementName=typeh, Path=(Validation.HasError)}" Value="false" />
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="IsEnabled" Value="true" />
-                                            </MultiDataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                            </Button>
+                            <Button Grid.Row="4" Width="141" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="15" FontWeight="Normal" Command="{Binding SavePolicyCommand}" Height="26" Content="Add" Grid.Column="1" Margin="1,0,0,5"/>
+
                         </Grid>
                     </Grid>
                 </StackPanel>
@@ -517,19 +447,19 @@
                             <Label Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="139" FontWeight="Bold" FontSize="15">Add a new user</Label>
 
                             <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15">Surname</Label>
-                            <TextBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="EmployeeSurname" Text="{Binding Employee.Surname, Mode=TwoWay, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="EmployeeSurname" Text="{Binding Employee.Surname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                             <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15">Name</Label>
-                            <TextBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="EmployeeName" Text="{Binding Employee.Name, Mode=TwoWay, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="EmployeeName" Text="{Binding Employee.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                             <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15">Login</Label>
-                            <TextBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="EmployeeLogin" Text="{Binding Employee.Login, Mode=TwoWay, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="EmployeeLogin" Text="{Binding Employee.Login, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                             <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15">Password</Label>
-                            <TextBox Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="EmployeePassword" Text="{Binding Employee.Password, Mode=TwoWay, ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="EmployeePassword" Text="{Binding Employee.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                             <Label Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Height="30">Role</Label>
-                            <ComboBox Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="EmployeeRole" SelectedValue="{Binding Path=Employee.Role,  ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" Height="22">
+                            <ComboBox Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="141" Name="EmployeeRole" SelectedValue="{Binding Path=Employee.Role,  UpdateSourceTrigger=PropertyChanged}" Height="22">
                                 <ComboBox.ItemsSource>
                                     <x:Array Type="{x:Type sys:String}">
                                         <sys:String>Admin</sys:String>
