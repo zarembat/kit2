@@ -50,7 +50,7 @@ namespace Insurance_company.ViewModels
         public AddClientViewModel() {
             setEntities();
         }
-       
+
         private void setEntities()
         {
             _client = new ClientSet();
@@ -78,26 +78,27 @@ namespace Insurance_company.ViewModels
             {
                 MessageBox.Show(ex.ToString());
             }
-
         }
 
         private void OnSaveChangesCompleted(IAsyncResult result)
         {
-            Application.Current.Dispatcher.Invoke(new Action(() =>
-            {
+
                 try
                 {
                     context.EndSaveChanges(result);
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
                     MessageBox.Show("Client added successfully!");
                     // Clearing the form:
                     Client = new ClientSet();
                     Address = new AdressSet();
+                }));
                 }
                 catch (DataServiceRequestException ex)
                 {
                     MessageBox.Show(ex.ToString());
                 }
-            }));
+
         }
 
         public bool Validation()
@@ -107,10 +108,10 @@ namespace Insurance_company.ViewModels
             {
                 MessageBox.Show("Surname is required!");
                 return false;
-            }
+        }
 
             if (!Regex.IsMatch(Client.Surname, @"^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ]+$"))
-            {
+        {
                 MessageBox.Show("Surname: Only letters!");
                 return false;
             }
@@ -122,22 +123,22 @@ namespace Insurance_company.ViewModels
             }
 
             if (!Regex.IsMatch(Client.Name, @"^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ]+$"))
-            {
+                {
                 MessageBox.Show("Name: Only letters!");
                 return false;
             }
 
             if (string.IsNullOrEmpty(Client.PESEL))
-            {
+                        {
                 MessageBox.Show("PESEL is required!");
                 return false;
             }
 
             if (!Regex.IsMatch(Client.PESEL, @"^[0-9]{11}$"))
-            {
+                            {
                 MessageBox.Show("PESEL: 11 digits!");
                 return false;
-            }
+                            }
 
             //Address
             if (string.IsNullOrEmpty(Address.Town))
@@ -150,7 +151,7 @@ namespace Insurance_company.ViewModels
             {
                 MessageBox.Show("Town: Only letters!");
                 return false;
-            }
+                        }
 
             if (string.IsNullOrEmpty(Address.Street))
             {
@@ -159,16 +160,16 @@ namespace Insurance_company.ViewModels
             }
 
             if (!Regex.IsMatch(Address.Street, @"^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ0-9]+$"))
-            {
+                        {
                 MessageBox.Show("Street: Only letters!");
                 return false;
             }
 
             if (string.IsNullOrEmpty(Address.HouseNumber))
-            {
+                            {
                 MessageBox.Show("House number is required!");
                 return false;
-            }
+                            }
 
             char[] letters = Address.HouseNumber.ToCharArray();
             if (!(Char.IsDigit(letters[0])))
@@ -196,12 +197,12 @@ namespace Insurance_company.ViewModels
                 }
 
                 else
-                {
+                        {
                     if (!(Char.IsDigit(letters[i])))
-                    {
+                            {
                         MessageBox.Show("House number: Wrong format! e.g. 12a/12");
-                        break;
-                    }
+                                break;
+                            }
                 }
             }
 
@@ -215,7 +216,7 @@ namespace Insurance_company.ViewModels
             {
                 MessageBox.Show("Zip code is required!");
                 return false;
-            }
+                        }
 
             if (!Regex.IsMatch(Address.ZipCode, @"^[0-9]{2}\-[0-9]{3}$"))
             {
@@ -225,6 +226,5 @@ namespace Insurance_company.ViewModels
 
             return true;
         }
-        
     }
 }

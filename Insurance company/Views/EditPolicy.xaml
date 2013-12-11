@@ -40,7 +40,7 @@
             <Label Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="136" FontWeight="Bold" FontSize="15" Height="30">Edit policy</Label>
 
             <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Grid.ColumnSpan="2" Height="30">Client</Label>
-            <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" SelectedValuePath="ClientId" ItemsSource="{Binding Clients}" SelectedValue="{Binding Policy.ClientClientId, UpdateSourceTrigger=PropertyChanged}" Height="22" />
+            <TextBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" IsEnabled="False" Width="100" Text="{Binding Policy.ClientClientId, UpdateSourceTrigger=PropertyChanged}" Height="22" />
 
             <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Grid.ColumnSpan="2" Height="30">Object</Label>
             <ComboBox Name="ObjectTypeComboBox" SelectionChanged="ObjectTypeChanged" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" IsEnabled="False" Width="141" Height="22" Margin="0,0,-8,0">

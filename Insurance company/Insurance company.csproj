@@ -219,7 +219,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Converters\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\iko.jpg" />

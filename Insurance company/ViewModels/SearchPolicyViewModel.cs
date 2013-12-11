@@ -153,17 +153,21 @@ namespace Insurance_company.ViewModels
             _policies = new ObservableCollection<PolicySet>();
 
             myLambda = GetWhereLambda(Policy);
-            if (myLambda == null)
-                MessageBox.Show("All fields are empty");
-            else
+            Task.Factory.StartNew(() =>
             {
-                policies = context.PolicySet.Where(myLambda);
-
-                foreach (PolicySet policy in policies)
+                if (myLambda == null)
+                    MessageBox.Show("All fields are empty");
+                else
                 {
-                    _policies.Add(policy);
-                }
+                    policies = context.PolicySet.Where(myLambda);
 
+                    foreach (PolicySet policy in policies)
+                    {
+                        _policies.Add(policy);
+                    }
+                }
+            }).ContinueWith(t =>
+            {
                 if (_policies.Count() == 0)
                     MessageBox.Show("No policies matching these criteria were found!");
 
@@ -172,9 +176,9 @@ namespace Insurance_company.ViewModels
                     PoliciesWindow pw = new PoliciesWindow();
                     pw.DataContext = new PoliciesViewModel(_policies);
                     pw.ShowDialog();
-                    //_policies = new ObservableCollection<PolicySet>(); // Zerujemy kolekcję w razie kolejnego wyszukiwania
+                    _policies = new ObservableCollection<PolicySet>(); // Zerujemy kolekcję w razie kolejnego wyszukiwania
                 }
-            }
+            }, TaskScheduler.FromCurrentSynchronizationContext());
 
         }
         

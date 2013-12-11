@@ -150,9 +150,22 @@
                         <Label Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="136" FontWeight="Bold" FontSize="15" Height="30">Add a new policy</Label>
 
                         <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Grid.ColumnSpan="2" Height="30">Client</Label>
-                        <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" SelectedValuePath="ClientId" ItemsSource="{Binding Clients}" SelectedValue="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type StackPanel}}, Path=DataContext.Policy.ClientClientId, UpdateSourceTrigger=PropertyChanged}" Height="22" />
-
-                        <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Grid.ColumnSpan="2" Height="30">Object</Label>
+                        <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" SelectedValuePath="ClientId" ItemsSource="{Binding Clients}" SelectedValue="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type StackPanel}}, Path=DataContext.Policy.ClientClientId, UpdateSourceTrigger=PropertyChanged}" Height="22">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0}. {1} {2}">
+                                                <Binding Path="ClientId"/>
+                                                <Binding Path="Name"/>
+                                                <Binding Path="Surname"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                            <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Grid.ColumnSpan="2" Height="30">Object</Label>
                         <ComboBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" Name="ObjectTypeComboBox" SelectedValue="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type StackPanel}}, Path=DataContext.Policy.ObjectType,  ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" Height="22" SelectionChanged="ObjectTypeChanged">
 
                             <ComboBox.ItemsSource>
@@ -348,8 +361,21 @@
                         <Label Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="136" FontWeight="Bold" FontSize="15" Height="30">Find a policy</Label>
 
                         <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Grid.ColumnSpan="2" Height="30">Client</Label>
-                        <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" SelectedValuePath="ClientId" ItemsSource="{Binding Clients}" SelectedValue="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type StackPanel}}, Path=DataContext.Policy.ClientClientId, UpdateSourceTrigger=PropertyChanged}" Height="22" />
-
+                        <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" SelectedValuePath="ClientId" ItemsSource="{Binding Clients}" SelectedValue="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type StackPanel}}, Path=DataContext.Policy.ClientClientId, UpdateSourceTrigger=PropertyChanged}" Height="22">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0}. {1} {2}">
+                                                <Binding Path="ClientId"/>
+                                                <Binding Path="Name"/>
+                                                <Binding Path="Surname"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                         <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" FontSize="15" Height="30">Object</Label>
                         <ComboBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="100" Name="comboboxFind" SelectedValue="{Binding Path=Policy.ObjectType}" Height="22">
 

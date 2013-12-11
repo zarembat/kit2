@@ -11,12 +11,19 @@ namespace Service
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Text.RegularExpressions;
     
     public partial class ClientSet
     {
         public ClientSet()
         {
             this.PolicySet = new HashSet<PolicySet>();
+        }
+
+        public string ToString()
+        {
+            return ClientId + ". " + Name + " " + Surname;
         }
     
         public int ClientId { get; set; }
@@ -27,5 +34,6 @@ namespace Service
     
         public virtual AdressSet AdressSet { get; set; }
         public virtual ICollection<PolicySet> PolicySet { get; set; }
+
     }
 }
